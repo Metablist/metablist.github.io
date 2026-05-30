@@ -3,83 +3,243 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Portfolio</title>
+    <title>Metablist | Minecraft Mod Developer</title>
     <style>
-        body { 
-            font-family: system-ui, -apple-system, sans-serif; 
-            line-height: 1.6; 
-            margin: 0; 
-            padding: 0; 
-            color: #333; 
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-color: #10b981; /* Emerald green, perfect for Minecraft theme */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
         }
-        header { 
-            background: #2c3e50; 
-            color: white; 
-            padding: 3rem 1rem; 
-            text-align: center; 
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
         }
-        header h1 { margin: 0; font-size: 2.5rem; }
-        header p { margin-top: 0.5rem; font-size: 1.2rem; opacity: 0.9; }
-        
-        main { 
-            max-width: 800px; 
-            margin: 2rem auto; 
-            padding: 0 1rem; 
+
+        header {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 4rem 2rem 2rem 2rem;
+            text-align: center;
         }
-        section { margin-bottom: 3rem; }
-        h2 { border-bottom: 2px solid #eee; padding-bottom: 0.5rem; color: #2c3e50; }
-        a { color: #3498db; text-decoration: none; font-weight: bold; }
-        a:hover { text-decoration: underline; }
-        
-        .project-card { 
-            border: 1px solid #e0e0e0; 
-            padding: 1.5rem; 
-            border-radius: 8px; 
-            margin-bottom: 1.5rem; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+
+        header h1 {
+            font-size: 3rem;
+            margin: 0;
+            background: linear-gradient(to right, #10b981, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.05em;
         }
-        .project-card h3 { margin-top: 0; }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.25rem;
+            margin-top: 0.5rem;
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem 2rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-color);
+        }
+
+        .stat-card h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+        }
+
+        .stat-val {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--text-main);
+            word-break: break-word;
+        }
+
+        .stat-card a {
+            color: var(--accent-color);
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .stat-card a:hover {
+            text-decoration: underline;
+        }
+
+        /* About Section */
+        section {
+            margin-bottom: 4rem;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            list-style: none;
+            padding: 0;
+        }
+
+        .social-links a {
+            color: var(--text-main);
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .social-links a:hover {
+            background-color: var(--border);
+            color: var(--accent-color);
+        }
+
+        .loading {
+            font-style: italic;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Your Name</h1>
-        <p>Software Engineer | Designer | Creator</p>
+        <h1>Metablist</h1>
+        <p>Upcoming Minecraft Mod Developer</p>
     </header>
 
     <main>
-        <section id="about">
-            <h2>About Me</h2>
-            <p>Hi! I'm a developer passionate about building elegant solutions. Welcome to my corner of the internet. Here you'll find some of my recent work and ways to get in touch.</p>
+        <section id="github-stats">
+            <h2>Live GitHub Insights</h2>
+            <div class="stats-grid">
+                
+                <div class="stat-card">
+                    <h3>Total Repositories</h3>
+                    <div id="total-repos" class="stat-val class loading">Loading...</div>
+                </div>
+
+                <div class="stat-card">
+                    <h3>Most Starred Project</h3>
+                    <div id="starred-repo-name" class="stat-val loading">Loading...</div>
+                    <a id="starred-repo-link" href="#" target="_blank" style="display:none;">View Repository →</a>
+                </div>
+
+                <div class="stat-card">
+                    <h3>Latest Update</h3>
+                    <div id="latest-repo-name" class="stat-val loading">Loading...</div>
+                    <a id="latest-repo-link" href="#" target="_blank" style="display:none;">View Repository →</a>
+                </div>
+
+            </div>
         </section>
 
-        <section id="projects">
-            <h2>Featured Projects</h2>
-            
-            <div class="project-card">
-                <h3>Project Title One</h3>
-                <p>A brief description of what this project does, the problem it solves, and the technologies (like Python, React, etc.) you used to build it.</p>
-                <a href="#">View Code on GitHub</a>
-            </div>
-
-            <div class="project-card">
-                <h3>Project Title Two</h3>
-                <p>Another cool thing you built. Don't be afraid to link out to live demos if you have them!</p>
-                <a href="#">View Live Demo</a>
-            </div>
+        <section id="about">
+            <h2>About Me</h2>
+            <p>I am a developer focused on creating unique, performance-optimized, and immersive Minecraft modifications. Exploring game mechanics, creating custom forge/fabric elements, and enhancing the sandbox experience are what drive my projects.</p>
         </section>
 
         <section id="contact">
-            <h2>Get in Touch</h2>
-            <p>I'm always open to discussing new projects or opportunities. Feel free to connect with me!</p>
-            <ul>
-                <li><a href="https://github.com/yourusername">GitHub Profile</a></li>
-                <li><a href="https://linkedin.com/in/yourprofile">LinkedIn</a></li>
-                <li><a href="mailto:your.email@example.com">Email Me</a></li>
+            <h2>Connect With Me</h2>
+            <ul class="social-links">
+                <li><a href="https://github.com/Metablist" target="_blank">GitHub</a></li>
+                <li><a href="https://discord.com/" target="_blank">Discord</a></li>
+                <li><a href="mailto:your.email@example.com">Email</a></li>
             </ul>
         </section>
     </main>
 
+    <script>
+        // Configuration
+        const username = 'Metablist';
+
+        async function fetchGitHubStats() {
+            try {
+                // Fetch up to 100 repositories from the user
+                const response = await fetch(`https://api.github.com/users/${username}/repos?per_page=100`);
+                if (!response.ok) throw new Error('Failed to fetch data');
+                
+                const repos = await response.json();
+
+                if (repos.length === 0) {
+                    document.querySelectorAll('.loading').forEach(el => el.textContent = 'No public repos found');
+                    return;
+                }
+
+                // 1. Total Repositories Count
+                const totalReposEl = document.getElementById('total-repos');
+                totalReposEl.textContent = repos.length;
+                totalReposEl.classList.remove('loading');
+
+                // 2. Find Most Starred Repository
+                const mostStarred = repos.reduce((max, repo) => repo.stargazers_count > max.stargazers_count ? repo : max, repos[0]);
+                const starredNameEl = document.getElementById('starred-repo-name');
+                const starredLinkEl = document.getElementById('starred-repo-link');
+                
+                starredNameEl.textContent = mostStarred.name;
+                starredNameEl.classList.remove('loading');
+                starredLinkEl.href = mostStarred.html_url;
+                starredLinkEl.style.display = 'inline-block';
+
+                // 3. Find Latest Updated Repository
+                // Sort by updated_at date descending
+                const sortedByLatest = [...repos].sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+                const latestRepo = sortedByLatest[0];
+                const latestNameEl = document.getElementById('latest-repo-name');
+                const latestLinkEl = document.getElementById('latest-repo-link');
+
+                latestNameEl.textContent = latestRepo.name;
+                latestNameEl.classList.remove('loading');
+                latestLinkEl.href = latestRepo.html_url;
+                latestLinkEl.style.display = 'inline-block';
+
+            } catch (error) {
+                console.error(error);
+                document.querySelectorAll('.loading').forEach(el => el.textContent = 'Error loading');
+            }
+        }
+
+        // Run the function when the page loads
+        window.addEventListener('DOMContentLoaded', fetchGitHubStats);
+    </script>
 </body>
 </html>
