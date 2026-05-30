@@ -70,6 +70,36 @@
             pointer-events: none;
         }
 
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: var(--bg);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .loader-text {
+            font-family: monospace;
+            font-size: 1.25rem;
+            letter-spacing: 0.2em;
+            color: var(--text-main);
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+        }
+
+        .blinker {
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink { 
+            50% { opacity: 0; } 
+        }
+
         @keyframes panGrid {
             0% { background-position: 0 0; }
             100% { background-position: -40px -40px; }
@@ -114,9 +144,9 @@
             animation: fadeUp 0.8s ease-out forwards;
         }
 
-        .card:nth-child(1) { animation-delay: 0.1s; }
-        .card:nth-child(2) { animation-delay: 0.25s; }
-        .card:nth-child(3) { animation-delay: 0.4s; }
+        .card:nth-child(1) { animation-delay: 1.4s; }
+        .card:nth-child(2) { animation-delay: 1.55s; }
+        .card:nth-child(3) { animation-delay: 1.7s; }
 
         .card:hover {
             border-color: var(--border-hover);
@@ -175,10 +205,40 @@
         }
 
         .user-info p {
-            margin: 0.5rem 0 0 0;
+            margin: 0.25rem 0 0 0;
             color: var(--text-dim);
             font-size: 1.15rem;
             font-weight: 500;
+        }
+
+        .location-time {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            width: fit-content;
+        }
+
+        .location-time svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+
+        .location-time .dot {
+            color: var(--border-hover);
+        }
+
+        #local-time {
+            font-family: monospace;
+            font-size: 0.95rem;
+            color: var(--text-main);
         }
 
         #spotify-container {
@@ -429,7 +489,7 @@
             max-width: 800px;
             margin-top: 1.5rem;
             opacity: 0; 
-            animation: fadeUp 0.8s ease-out 0.55s forwards;
+            animation: fadeUp 0.8s ease-out 1.85s forwards;
             position: relative;
             z-index: 1;
         }
@@ -471,30 +531,22 @@
         }
 
         @media (max-width: 650px) {
-            body {
-                padding: 2rem 1rem;
-            }
-
-            .card {
-                padding: 1.5rem;
-            }
-
+            body { padding: 2rem 1rem; }
+            .card { padding: 1.5rem; }
             .discord-profile {
                 flex-direction: column;
                 text-align: center;
                 gap: 1rem;
             }
-
+            .location-time { margin: 0.75rem auto 0 auto; }
             #spotify-container {
                 flex-direction: column;
                 text-align: center;
             }
-
             .spotify-details {
                 align-items: center;
                 width: 100%;
             }
-
             .stats-grid, .links-grid {
                 grid-template-columns: 1fr;
             }
@@ -502,6 +554,10 @@
     </style>
 </head>
 <body>
+
+    <div id="loader">
+        <div class="loader-text">INITIALIZING<span class="blinker">_</span></div>
+    </div>
 
     <div class="container">
         
@@ -514,6 +570,12 @@
                 <div class="user-info">
                     <h1>Metablist</h1>
                     <p id="discord-activity-text">MouseTweak</p>
+                    <div class="location-time">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                        <span>Germany</span>
+                        <span class="dot">•</span>
+                        <span id="local-time">00:00:00</span>
+                    </div>
                 </div>
             </div>
 
@@ -532,11 +594,11 @@
         <div class="card">
             <h2>Skills & Expertise</h2>
             <div class="skills-container">
-                <div class="skill-tag">Graphic Design</div>
                 <div class="skill-tag">Cyber Security</div>
                 <div class="skill-tag">Python</div>
-                <div class="skill-tag">C, C++, C#</div>
-                <div class="skill-tag learning-tag">Learning: Video Editing</div>
+                <div class="skill-tag">C</div>
+                <div class="skill-tag">C#</div>
+                <div class="skill-tag">C++</div>
                 <div class="skill-tag learning-tag">Learning: Java</div>
             </div>
 
@@ -588,6 +650,25 @@
         const ghUsername = 'Metablist';
         const discordId = '1401860400957489232';
         const palette = ['#ffffff', '#cccccc', '#999999', '#666666', '#333333'];
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                loader.style.opacity = '0';
+                loader.style.visibility = 'hidden';
+            }, 1200);
+        });
+
+        function updateLocalTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-GB', { 
+                timeZone: 'Europe/Berlin', 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit' 
+            });
+            document.getElementById('local-time').textContent = `${timeString} CET`;
+        }
 
         async function fetchGitHubData() {
             try {
@@ -641,11 +722,11 @@
 
                         const legendItem = document.createElement('div');
                         legendItem.className = 'legend-item';
-                        legendItem.style.animationDelay = `${index * 0.15 + 0.5}s`;
+                        legendItem.style.animationDelay = `${index * 0.15 + 1.8}s`;
                         legendItem.innerHTML = `<div class="legend-dot" style="background-color: ${color}; color: ${color}"></div>${lang[0]} (${Math.round(percentage)}%)`;
                         legendContainer.appendChild(legendItem);
                     });
-                }, 500);
+                }, 1800);
 
             } catch (e) {}
         }
@@ -699,6 +780,8 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            updateLocalTime();
+            setInterval(updateLocalTime, 1000);
             fetchGitHubData();
             updateLanyard();
             setInterval(updateLanyard, 3000);
