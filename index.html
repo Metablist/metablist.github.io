@@ -3,389 +3,495 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Metablist | Minecraft Mod Developer</title>
+    <title>Metablist | Developer</title>
     <style>
         :root {
-            --bg-color: #0b0f19;
-            --card-bg: #111827;
-            --card-border: #1f2937;
-            --accent-glow: rgba(16, 185, 129, 0.15);
-            --accent-color: #10b981;
-            --text-main: #f9fafb;
-            --text-muted: #9ca3af;
-            --radius-lg: 20px;
-            --radius-md: 12px;
+            --bg: #000000;
+            --surface: #0a0a0a;
+            --border: rgba(255, 255, 255, 0.1);
+            --border-hover: rgba(255, 255, 255, 0.4);
+            --text-main: #ffffff;
+            --text-dim: #a3a3a3;
+            --glow: 0 0 20px rgba(255, 255, 255, 0.15);
+            --glow-strong: 0 0 30px rgba(255, 255, 255, 0.3);
+            --radius: 16px;
         }
 
         body {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--bg-color);
+            background-color: var(--bg);
             color: var(--text-main);
-            line-height: 1.6;
             margin: 0;
-            padding: 0;
+            padding: 2rem 1rem;
             -webkit-font-smoothing: antialiased;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
         }
 
-        body::before {
-            content: "";
+        .container {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            transition: all 0.3s ease;
+            box-shadow: var(--glow);
+        }
+
+        .card:hover {
+            border-color: var(--border-hover);
+            box-shadow: var(--glow-strong);
+        }
+
+        .discord-profile {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .avatar-wrapper {
+            position: relative;
+        }
+
+        #discord-avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+        }
+
+        .status-indicator {
             position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 600px;
-            height: 300px;
-            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
-            z-index: -1;
-            pointer-events: none;
+            bottom: 2px;
+            right: 2px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 4px solid var(--surface);
+            background-color: #737373;
+            transition: background-color 0.3s;
         }
 
-        header {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 6rem 2rem 3rem 2rem;
-            text-align: center;
-        }
-
-        header h1 {
-            font-size: 3.5rem;
+        .user-info h1 {
             margin: 0;
-            background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.05em;
+            font-size: 2rem;
             font-weight: 800;
+            letter-spacing: -0.05em;
+            text-shadow: 0 0 10px rgba(255,255,255,0.2);
         }
 
-        header p {
-            color: var(--text-muted);
-            font-size: 1.35rem;
+        .user-info p {
+            margin: 0.25rem 0 0 0;
+            color: var(--text-dim);
+            font-size: 1.1rem;
+        }
+
+        #spotify-container {
+            display: none;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        #spotify-art {
+            width: 64px;
+            height: 64px;
+            border-radius: 8px;
+        }
+
+        .spotify-details {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .spotify-details strong {
+            font-size: 1.1rem;
+        }
+
+        .spotify-details span {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        .spotify-bar-bg {
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
             margin-top: 0.75rem;
-            font-weight: 400;
+            overflow: hidden;
         }
 
-        main {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 0 2rem 6rem 2rem;
-        }
-
-        section {
-            margin-bottom: 5rem;
+        .spotify-bar-fill {
+            height: 100%;
+            background: var(--text-main);
+            width: 0%;
+            box-shadow: 0 0 10px rgba(255,255,255,0.8);
+            transition: width 1s linear;
         }
 
         h2 {
-            font-size: 1.5rem;
-            letter-spacing: -0.02em;
-            color: var(--text-main);
-            margin-bottom: 2rem;
+            font-size: 1.25rem;
+            margin: 0 0 1.5rem 0;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 1rem;
         }
 
         h2::after {
             content: "";
-            height: 1px;
             flex-grow: 1;
-            background: var(--card-border);
+            height: 1px;
+            background: var(--border);
+        }
+
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .skill-tag {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .learning-tag {
+            border-color: var(--text-main);
+            box-shadow: 0 0 10px rgba(255,255,255,0.2);
+        }
+
+        .lang-chart-wrapper {
+            margin-top: 2rem;
+        }
+
+        .lang-chart-wrapper p {
+            margin: 0 0 0.75rem 0;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .lang-bar {
+            width: 100%;
+            height: 12px;
+            border-radius: 6px;
+            display: flex;
+            overflow: hidden;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .lang-segment {
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+
+        .lang-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 0.75rem;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
         }
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.75rem;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
         }
 
-        .stat-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius-lg);
-            padding: 2rem;
+        .stat-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            min-height: 140px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
 
-        .stat-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(16, 185, 129, 0.4);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-
-        .stat-card h3 {
-            margin: 0 0 1rem 0;
-            font-size: 0.85rem;
+        .stat-box span {
+            font-size: 0.8rem;
+            color: var(--text-dim);
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: var(--text-muted);
-            font-weight: 600;
+            margin-bottom: 0.5rem;
         }
 
-        .stat-val {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-main);
+        .stat-box strong {
+            font-size: 1.5rem;
             word-break: break-word;
             line-height: 1.2;
         }
 
-        .stat-card a {
-            color: var(--accent-color);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            margin-top: 1.25rem;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-
-        .stat-card a:hover {
-            color: #34d399;
-        }
-
-        .about-text {
-            font-size: 1.15rem;
-            color: var(--text-muted);
-            max-width: 800px;
-            line-height: 1.75;
-            margin-bottom: 1.5rem;
-        }
-
-        .about-text strong {
+        .stat-box a {
+            margin-top: 1rem;
             color: var(--text-main);
-            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
         }
 
-        .social-links {
-            display: flex;
-            flex-wrap: wrap;
+        .stat-box a:hover {
+            opacity: 1;
+            text-shadow: 0 0 8px rgba(255,255,255,0.5);
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 1rem;
-            list-style: none;
-            padding: 0;
-            margin: 0;
         }
 
-        .social-links a {
+        .link-btn {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            justify-content: center;
+            gap: 0.5rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 1rem;
+            border-radius: 12px;
             color: var(--text-main);
-            background-color: var(--card-bg);
-            border: 1px solid var(--card-border);
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--radius-md);
             text-decoration: none;
-            font-weight: 500;
-            font-size: 0.95rem;
+            font-weight: 600;
             transition: all 0.2s;
-            cursor: pointer;
         }
 
-        .social-links a svg, .social-links a img {
+        .link-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--border-hover);
+            box-shadow: var(--glow);
+            transform: translateY(-2px);
+        }
+
+        .link-btn svg, .link-btn img {
             width: 20px;
             height: 20px;
             fill: currentColor;
-        }
-
-        .social-links a:hover {
-            background-color: var(--card-border);
-            border-color: var(--accent-color);
-            transform: translateY(-1px);
-        }
-
-        .discord-status-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background-color: #6b7280;
-            display: inline-block;
-            transition: background-color 0.3s ease;
-        }
-
-        .discord-status-container {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .discord-text-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .discord-activity {
-            font-size: 0.75rem;
-            color: var(--accent-color);
-            font-weight: 500;
-            margin-top: -2px;
-        }
-
-        .loading {
-            font-style: italic;
-            color: var(--text-muted);
-            opacity: 0.7;
-            font-weight: 400;
-            font-size: 1.5rem;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Metablist</h1>
-        <p>Fabric Mod Developer & Graphic Designer</p>
-    </header>
-
-    <main>
-        <section id="github-stats">
-            <h2>Live GitHub Insights</h2>
-            <div class="stats-grid">
-                
-                <div class="stat-card">
-                    <h3>Total Repositories</h3>
-                    <div id="total-repos" class="stat-val loading">Loading...</div>
+    <div class="container">
+        
+        <div class="card">
+            <div class="discord-profile">
+                <div class="avatar-wrapper">
+                    <img id="discord-avatar" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Discord Avatar">
+                    <div class="status-indicator" id="discord-status"></div>
                 </div>
-
-                <div class="stat-card">
-                    <h3>Most Starred Project</h3>
-                    <div id="starred-repo-name" class="stat-val loading">Loading...</div>
-                    <a id="starred-repo-link" href="#" target="_blank" style="display:none;">View Project →</a>
+                <div class="user-info">
+                    <h1>Metablist</h1>
+                    <p id="discord-activity-text">MouseTweak</p>
                 </div>
-
-                <div class="stat-card">
-                    <h3>Latest Update</h3>
-                    <div id="latest-repo-name" class="stat-val loading">Loading...</div>
-                    <a id="latest-repo-link" href="#" target="_blank" style="display:none;">View Project →</a>
-                </div>
-
             </div>
-        </section>
 
-        <section id="about">
-            <h2>About Me</h2>
-            <p class="about-text">
-                I am a Fabric mod developer and graphic designer, known in-game as <strong>MouseTweak</strong>. Coding is purely a hobby for me; I build projects in my free time and have no plans to monetize them right now. I focus on creating unique, performance-optimized, and immersive Minecraft modifications.
-            </p>
-            <p class="about-text">
-                Outside of game modification, my primary hobbies include graphic design and Minecraft PvP. I also possess exceptional cyber security knowledge and specialize in screensharing and thoroughly PC-checking players for cheats and illicit modifications.
-            </p>
-        </section>
+            <div id="spotify-container">
+                <img id="spotify-art" src="" alt="Album Art">
+                <div class="spotify-details">
+                    <strong id="spotify-song">Loading...</strong>
+                    <span id="spotify-artist">Loading...</span>
+                    <div class="spotify-bar-bg">
+                        <div class="spotify-bar-fill" id="spotify-progress"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <section id="contact">
-            <h2>Connect With Me</h2>
-            <ul class="social-links">
-                <li>
-                    <a href="https://modrinth.com/user/Metablist" target="_blank">
-                        <img src="https://cdn.simpleicons.org/modrinth/f9fafb" alt="Modrinth" />
-                        Metablist
-                    </a>
-                </li>
-                <li>
-                    <a href="https://github.com/Metablist" target="_blank">
-                        <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
-                        GitHub
-                    </a>
-                </li>
-                <li>
-                    <a onclick="navigator.clipboard.writeText('metablist'); alert('Discord username copied to clipboard!');">
-                        <div class="discord-status-container">
-                            <span class="discord-status-dot" id="discord-dot"></span>
-                            <div class="discord-text-wrapper">
-                                <span id="discord-text">metablist</span>
-                                <span class="discord-activity" id="discord-activity"></span>
-                            </div>
-                        </div>
-                    </a>
-                </li>
-            </ul>
-        </section>
-    </main>
+        <div class="card">
+            <h2>Skills & Expertise</h2>
+            <div class="skills-container">
+                <div class="skill-tag">Cyber Security</div>
+                <div class="skill-tag">Python</div>
+                <div class="skill-tag">C</div>
+                <div class="skill-tag">C#</div>
+                <div class="skill-tag">C++</div>
+                <div class="skill-tag learning-tag">Learning: Java</div>
+            </div>
+
+            <div class="lang-chart-wrapper">
+                <p>Most Used Languages</p>
+                <div class="lang-bar" id="lang-bar"></div>
+                <div class="lang-legend" id="lang-legend"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>GitHub Insights</h2>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <span>Total Projects</span>
+                    <strong id="total-repos">...</strong>
+                </div>
+                <div class="stat-box">
+                    <span>Most Starred</span>
+                    <strong id="starred-repo-name">...</strong>
+                    <a id="starred-repo-link" href="#" target="_blank" style="display:none;">View →</a>
+                </div>
+                <div class="stat-box">
+                    <span>Latest Update</span>
+                    <strong id="latest-repo-name">...</strong>
+                    <a id="latest-repo-link" href="#" target="_blank" style="display:none;">View →</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="links-grid">
+            <a href="mailto:metablist@gmail.com" class="link-btn">
+                <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                Email
+            </a>
+            <a href="https://modrinth.com/user/Metablist" target="_blank" class="link-btn">
+                <img src="https://cdn.simpleicons.org/modrinth/ffffff" alt="Modrinth" />
+                Modrinth
+            </a>
+            <a href="https://github.com/Metablist" target="_blank" class="link-btn">
+                <svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+                GitHub
+            </a>
+        </div>
+    </div>
 
     <script>
-        const username = 'Metablist';
+        const ghUsername = 'Metablist';
         const discordId = '1401860400957489232';
+        
+        const palette = ['#ffffff', '#cccccc', '#999999', '#666666', '#333333'];
 
-        async function fetchGitHubStats() {
+        async function fetchGitHubData() {
             try {
-                const response = await fetch(`https://api.github.com/users/${username}/repos?per_page=100`);
-                if (!response.ok) throw new Error('API failed');
+                const res = await fetch(`https://api.github.com/users/${ghUsername}/repos?per_page=100`);
+                if (!res.ok) return;
+                const repos = await res.json();
                 
-                const repos = await response.json();
-                const filteredRepos = repos.filter(repo => {
-                    const isSelfRepo = repo.name.toLowerCase() === `${username.toLowerCase()}.github.io`;
-                    const isFork = repo.fork === true;
-                    return !isSelfRepo && !isFork;
+                const filtered = repos.filter(r => !r.fork && r.name.toLowerCase() !== `${ghUsername.toLowerCase()}.github.io`);
+                
+                if(filtered.length === 0) return;
+
+                document.getElementById('total-repos').textContent = filtered.length;
+
+                const mostStarred = filtered.reduce((max, r) => r.stargazers_count > max.stargazers_count ? r : max, filtered[0]);
+                document.getElementById('starred-repo-name').textContent = mostStarred.name;
+                const sLink = document.getElementById('starred-repo-link');
+                sLink.href = mostStarred.html_url;
+                sLink.style.display = 'inline-block';
+
+                const latest = [...filtered].sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))[0];
+                document.getElementById('latest-repo-name').textContent = latest.name;
+                const lLink = document.getElementById('latest-repo-link');
+                lLink.href = latest.html_url;
+                lLink.style.display = 'inline-block';
+
+                const langCounts = {};
+                let totalLangs = 0;
+                filtered.forEach(r => {
+                    if (r.language) {
+                        langCounts[r.language] = (langCounts[r.language] || 0) + 1;
+                        totalLangs++;
+                    }
                 });
 
-                if (filteredRepos.length === 0) {
-                    document.querySelectorAll('.loading').forEach(el => el.textContent = 'No custom repos found');
-                    return;
-                }
+                const sortedLangs = Object.entries(langCounts).sort((a, b) => b[1] - a[1]);
+                const barContainer = document.getElementById('lang-bar');
+                const legendContainer = document.getElementById('lang-legend');
 
-                const totalReposEl = document.getElementById('total-repos');
-                totalReposEl.textContent = filteredRepos.length;
-                totalReposEl.classList.remove('loading');
+                sortedLangs.forEach((lang, index) => {
+                    const color = palette[index % palette.length];
+                    const percentage = (lang[1] / totalLangs) * 100;
 
-                const mostStarred = filteredRepos.reduce((max, repo) => repo.stargazers_count > max.stargazers_count ? repo : max, filteredRepos[0]);
-                const starredNameEl = document.getElementById('starred-repo-name');
-                const starredLinkEl = document.getElementById('starred-repo-link');
-                
-                starredNameEl.textContent = mostStarred.name;
-                starredNameEl.classList.remove('loading');
-                starredLinkEl.href = mostStarred.html_url;
-                starredLinkEl.style.display = 'inline-flex';
+                    const segment = document.createElement('div');
+                    segment.className = 'lang-segment';
+                    segment.style.width = `${percentage}%`;
+                    segment.style.backgroundColor = color;
+                    barContainer.appendChild(segment);
 
-                const sortedByLatest = [...filteredRepos].sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
-                const latestRepo = sortedByLatest[0];
-                const latestNameEl = document.getElementById('latest-repo-name');
-                const latestLinkEl = document.getElementById('latest-repo-link');
+                    const legendItem = document.createElement('div');
+                    legendItem.className = 'legend-item';
+                    legendItem.innerHTML = `<div class="legend-dot" style="background-color: ${color}"></div>${lang[0]} (${Math.round(percentage)}%)`;
+                    legendContainer.appendChild(legendItem);
+                });
 
-                latestNameEl.textContent = latestRepo.name;
-                latestNameEl.classList.remove('loading');
-                latestLinkEl.href = latestRepo.html_url;
-                latestLinkEl.style.display = 'inline-flex';
-
-            } catch (error) {
-                document.querySelectorAll('.loading').forEach(el => el.textContent = 'Error loading');
-            }
+            } catch (e) {}
         }
 
-        async function fetchDiscordStatus() {
+        async function updateLanyard() {
             try {
                 const res = await fetch(`https://api.lanyard.rest/v1/users/${discordId}`);
-                if (!res.ok) throw new Error('API failed');
+                if (!res.ok) return;
                 const { data } = await res.json();
-                
-                const statusColors = {
-                    online: '#10b981',
-                    idle: '#f59e0b',
-                    dnd: '#ef4444',
-                    offline: '#6b7280'
-                };
-                
-                const dot = document.getElementById('discord-dot');
-                const activityText = document.getElementById('discord-activity');
-                
-                dot.style.backgroundColor = statusColors[data.discord_status] || statusColors.offline;
-                
-                if (data.discord_status !== 'offline' && data.activities && data.activities.length > 0) {
-                    const playing = data.activities.find(a => a.type === 0);
-                    if (playing) {
-                        activityText.textContent = `Playing ${playing.name}`;
-                    }
+
+                const avatarEl = document.getElementById('discord-avatar');
+                if (data.discord_user.avatar) {
+                    avatarEl.src = `https://cdn.discordapp.com/avatars/${discordId}/${data.discord_user.avatar}.png`;
                 }
-            } catch (error) {}
+
+                const colors = { online: '#22c55e', idle: '#f59e0b', dnd: '#ef4444', offline: '#737373' };
+                document.getElementById('discord-status').style.backgroundColor = colors[data.discord_status] || colors.offline;
+
+                const actText = document.getElementById('discord-activity-text');
+                const nonSpotifyAct = data.activities.find(a => a.type === 0);
+                if (nonSpotifyAct) {
+                    actText.textContent = `Playing ${nonSpotifyAct.name}`;
+                } else {
+                    actText.textContent = 'MouseTweak';
+                }
+
+                const spotifyContainer = document.getElementById('spotify-container');
+                if (data.spotify) {
+                    spotifyContainer.style.display = 'flex';
+                    document.getElementById('spotify-art').src = data.spotify.album_art_url;
+                    document.getElementById('spotify-song').textContent = data.spotify.song;
+                    document.getElementById('spotify-artist').textContent = data.spotify.artist;
+
+                    const total = data.spotify.timestamps.end - data.spotify.timestamps.start;
+                    const current = Date.now() - data.spotify.timestamps.start;
+                    const pct = Math.min((current / total) * 100, 100);
+                    document.getElementById('spotify-progress').style.width = `${pct}%`;
+                } else {
+                    spotifyContainer.style.display = 'none';
+                }
+            } catch (e) {}
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            fetchGitHubStats();
-            fetchDiscordStatus();
+            fetchGitHubData();
+            updateLanyard();
+            setInterval(updateLanyard, 3000);
         });
     </script>
 </body>
