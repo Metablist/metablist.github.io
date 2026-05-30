@@ -1,1 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Portfolio</title>
+    <style>
+        body { 
+            font-family: system-ui, -apple-system, sans-serif; 
+            line-height: 1.6; 
+            margin: 0; 
+            padding: 0; 
+            color: #333; 
+        }
+        header { 
+            background: #2c3e50; 
+            color: white; 
+            padding: 3rem 1rem; 
+            text-align: center; 
+        }
+        header h1 { margin: 0; font-size: 2.5rem; }
+        header p { margin-top: 0.5rem; font-size: 1.2rem; opacity: 0.9; }
+        
+        main { 
+            max-width: 800px; 
+            margin: 2rem auto; 
+            padding: 0 1rem; 
+        }
+        section { margin-bottom: 3rem; }
+        h2 { border-bottom: 2px solid #eee; padding-bottom: 0.5rem; color: #2c3e50; }
+        a { color: #3498db; text-decoration: none; font-weight: bold; }
+        a:hover { text-decoration: underline; }
+        
+        .project-card { 
+            border: 1px solid #e0e0e0; 
+            padding: 1.5rem; 
+            border-radius: 8px; 
+            margin-bottom: 1.5rem; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .project-card h3 { margin-top: 0; }
+    </style>
+</head>
+<body>
 
+    <header>
+        <h1>Your Name</h1>
+        <p>Software Engineer | Designer | Creator</p>
+    </header>
+
+    <main>
+        <section id="about">
+            <h2>About Me</h2>
+            <p>Hi! I'm a developer passionate about building elegant solutions. Welcome to my corner of the internet. Here you'll find some of my recent work and ways to get in touch.</p>
+        </section>
+
+        <section id="projects">
+            <h2>Featured Projects</h2>
+            
+            <div class="project-card">
+                <h3>Project Title One</h3>
+                <p>A brief description of what this project does, the problem it solves, and the technologies (like Python, React, etc.) you used to build it.</p>
+                <a href="#">View Code on GitHub</a>
+            </div>
+
+            <div class="project-card">
+                <h3>Project Title Two</h3>
+                <p>Another cool thing you built. Don't be afraid to link out to live demos if you have them!</p>
+                <a href="#">View Live Demo</a>
+            </div>
+        </section>
+
+        <section id="contact">
+            <h2>Get in Touch</h2>
+            <p>I'm always open to discussing new projects or opportunities. Feel free to connect with me!</p>
+            <ul>
+                <li><a href="https://github.com/yourusername">GitHub Profile</a></li>
+                <li><a href="https://linkedin.com/in/yourprofile">LinkedIn</a></li>
+                <li><a href="mailto:your.email@example.com">Email Me</a></li>
+            </ul>
+        </section>
+    </main>
+
+</body>
+</html>
