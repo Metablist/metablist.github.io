@@ -646,146 +646,160 @@
         </a>
     </div>
 
-    <script>
-        const ghUsername = 'Metablist';
-        const discordId = '1401860400957489232';
-        const palette = ['#ffffff', '#cccccc', '#999999', '#666666', '#333333'];
+ <script>
+    const ghUsername = 'Metablist';
+    const discordId = '1401860400957489232';
+    const palette = ['#ffffff', '#cccccc', '#999999', '#666666', '#333333'];
 
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                const loader = document.getElementById('loader');
-                loader.style.opacity = '0';
-                loader.style.visibility = 'hidden';
-            }, 1200);
+    let spotifyData = null;
+    let progressInterval = null;
+
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            const loader = document.getElementById('loader');
+            loader.style.opacity = '0';
+            loader.style.visibility = 'hidden';
+        }, 1200);
+    });
+
+    function updateLocalTime() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('en-GB', {
+            timeZone: 'Europe/Berlin',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
         });
+        document.getElementById('local-time').textContent = `${timeString} CET`;
+    }
 
-        function updateLocalTime() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('en-GB', { 
-                timeZone: 'Europe/Berlin', 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                second: '2-digit' 
+    function updateSpotifyProgress() {
+        if (!spotifyData) return;
+        const total = spotifyData.timestamps.end - spotifyData.timestamps.start;
+        const current = Date.now() - spotifyData.timestamps.start;
+        const pct = Math.max(0, Math.min((current / total) * 100, 100));
+        document.getElementById('spotify-progress').style.width = `${pct}%`;
+    }
+
+    async function fetchGitHubData() {
+        try {
+            const res = await fetch(`https://api.github.com/users/${ghUsername}/repos?per_page=100`);
+            if (!res.ok) return;
+            const repos = await res.json();
+
+            const filtered = repos.filter(r => !r.fork && r.name.toLowerCase() !== `${ghUsername.toLowerCase()}.github.io`);
+            if (filtered.length === 0) return;
+
+            document.getElementById('total-repos').textContent = filtered.length;
+
+            const mostStarred = filtered.reduce((max, r) => r.stargazers_count > max.stargazers_count ? r : max, filtered[0]);
+            document.getElementById('starred-repo-name').textContent = mostStarred.name;
+            const sLink = document.getElementById('starred-repo-link');
+            sLink.href = mostStarred.html_url;
+            sLink.style.display = 'inline-flex';
+
+            const latest = [...filtered].sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))[0];
+            document.getElementById('latest-repo-name').textContent = latest.name;
+            const lLink = document.getElementById('latest-repo-link');
+            lLink.href = latest.html_url;
+            lLink.style.display = 'inline-flex';
+
+            const langCounts = {};
+            let totalLangs = 0;
+            filtered.forEach(r => {
+                if (r.language) {
+                    langCounts[r.language] = (langCounts[r.language] || 0) + 1;
+                    totalLangs++;
+                }
             });
-            document.getElementById('local-time').textContent = `${timeString} CET`;
-        }
 
-        async function fetchGitHubData() {
-            try {
-                const res = await fetch(`https://api.github.com/users/${ghUsername}/repos?per_page=100`);
-                if (!res.ok) return;
-                const repos = await res.json();
-                
-                const filtered = repos.filter(r => !r.fork && r.name.toLowerCase() !== `${ghUsername.toLowerCase()}.github.io`);
-                if(filtered.length === 0) return;
+            const sortedLangs = Object.entries(langCounts).sort((a, b) => b[1] - a[1]);
+            const barContainer = document.getElementById('lang-bar');
+            const legendContainer = document.getElementById('lang-legend');
 
-                document.getElementById('total-repos').textContent = filtered.length;
+            setTimeout(() => {
+                sortedLangs.forEach((lang, index) => {
+                    const color = palette[index % palette.length];
+                    const percentage = (lang[1] / totalLangs) * 100;
 
-                const mostStarred = filtered.reduce((max, r) => r.stargazers_count > max.stargazers_count ? r : max, filtered[0]);
-                document.getElementById('starred-repo-name').textContent = mostStarred.name;
-                const sLink = document.getElementById('starred-repo-link');
-                sLink.href = mostStarred.html_url;
-                sLink.style.display = 'inline-flex';
+                    const segment = document.createElement('div');
+                    segment.className = 'lang-segment';
+                    segment.style.backgroundColor = color;
+                    barContainer.appendChild(segment);
 
-                const latest = [...filtered].sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))[0];
-                document.getElementById('latest-repo-name').textContent = latest.name;
-                const lLink = document.getElementById('latest-repo-link');
-                lLink.href = latest.html_url;
-                lLink.style.display = 'inline-flex';
+                    setTimeout(() => { segment.style.width = `${percentage}%`; }, 100);
 
-                const langCounts = {};
-                let totalLangs = 0;
-                filtered.forEach(r => {
-                    if (r.language) {
-                        langCounts[r.language] = (langCounts[r.language] || 0) + 1;
-                        totalLangs++;
-                    }
+                    const legendItem = document.createElement('div');
+                    legendItem.className = 'legend-item';
+                    legendItem.style.animationDelay = `${index * 0.15 + 1.8}s`;
+                    legendItem.innerHTML = `<div class="legend-dot" style="background-color: ${color}; color: ${color}"></div>${lang[0]} (${Math.round(percentage)}%)`;
+                    legendContainer.appendChild(legendItem);
                 });
+            }, 1800);
 
-                const sortedLangs = Object.entries(langCounts).sort((a, b) => b[1] - a[1]);
-                const barContainer = document.getElementById('lang-bar');
-                const legendContainer = document.getElementById('lang-legend');
+        } catch (e) {}
+    }
 
-                setTimeout(() => {
-                    sortedLangs.forEach((lang, index) => {
-                        const color = palette[index % palette.length];
-                        const percentage = (lang[1] / totalLangs) * 100;
+    async function updateLanyard() {
+        try {
+            const res = await fetch(`https://api.lanyard.rest/v1/users/${discordId}`);
+            if (!res.ok) return;
+            const json = await res.json();
+            const data = json.data;
+            if (!data) return;
 
-                        const segment = document.createElement('div');
-                        segment.className = 'lang-segment';
-                        segment.style.backgroundColor = color;
-                        barContainer.appendChild(segment);
-                        
-                        setTimeout(() => {
-                            segment.style.width = `${percentage}%`;
-                        }, 100);
+            // Avatar
+            if (data.discord_user?.avatar) {
+                document.getElementById('discord-avatar').src =
+                    `https://cdn.discordapp.com/avatars/${discordId}/${data.discord_user.avatar}.png`;
+            }
 
-                        const legendItem = document.createElement('div');
-                        legendItem.className = 'legend-item';
-                        legendItem.style.animationDelay = `${index * 0.15 + 1.8}s`;
-                        legendItem.innerHTML = `<div class="legend-dot" style="background-color: ${color}; color: ${color}"></div>${lang[0]} (${Math.round(percentage)}%)`;
-                        legendContainer.appendChild(legendItem);
-                    });
-                }, 1800);
+            // Status dot
+            const colors = { online: '#22c55e', idle: '#f59e0b', dnd: '#ef4444', offline: '#737373' };
+            const statusDot = document.getElementById('discord-status');
+            statusDot.style.backgroundColor = colors[data.discord_status] || colors.offline;
+            statusDot.style.animation = data.discord_status === 'offline' ? 'none' : 'pulseRing 2s infinite';
 
-            } catch (e) {}
-        }
+            // Activity text
+            const nonSpotifyAct = data.activities?.find(a => a.type === 0) ?? null;
+            document.getElementById('discord-activity-text').textContent =
+                nonSpotifyAct ? `Playing ${nonSpotifyAct.name}` : 'MouseTweak';
 
-        async function updateLanyard() {
-            try {
-                const res = await fetch(`https://api.lanyard.rest/v1/users/${discordId}`);
-                if (!res.ok) return;
-                const { data } = await res.json();
-                if (!data) return;
+            // Spotify
+            const spotifyContainer = document.getElementById('spotify-container');
+            if (data.listening_to_spotify && data.spotify) {
+                const sp = data.spotify;
+                spotifyData = sp;
 
-                const avatarEl = document.getElementById('discord-avatar');
-                if (data.discord_user && data.discord_user.avatar) {
-                    avatarEl.src = `https://cdn.discordapp.com/avatars/${discordId}/${data.discord_user.avatar}.png`;
+                document.getElementById('spotify-art').src = sp.album_art_url ?? '';
+                document.getElementById('spotify-song').textContent = sp.song ?? 'Unknown';
+                document.getElementById('spotify-artist').textContent = sp.artist ?? 'Unknown';
+
+                spotifyContainer.style.display = 'flex';
+
+                // Start live progress ticker if not already running
+                if (!progressInterval) {
+                    progressInterval = setInterval(updateSpotifyProgress, 1000);
                 }
-
-                const colors = { online: '#22c55e', idle: '#f59e0b', dnd: '#ef4444', offline: '#737373' };
-                const statusDot = document.getElementById('discord-status');
-                statusDot.style.backgroundColor = colors[data.discord_status] || colors.offline;
-                
-                if(data.discord_status === 'offline') {
-                    statusDot.style.animation = 'none';
-                } else {
-                    statusDot.style.animation = 'pulseRing 2s infinite';
+                updateSpotifyProgress();
+            } else {
+                spotifyData = null;
+                spotifyContainer.style.display = 'none';
+                if (progressInterval) {
+                    clearInterval(progressInterval);
+                    progressInterval = null;
                 }
+            }
+        } catch (e) {}
+    }
 
-                const actText = document.getElementById('discord-activity-text');
-                const nonSpotifyAct = data.activities ? data.activities.find(a => a.type === 0) : null;
-                
-                if (nonSpotifyAct) {
-                    actText.textContent = `Playing ${nonSpotifyAct.name}`;
-                } else {
-                    actText.textContent = 'MouseTweak';
-                }
-
-                const spotifyContainer = document.getElementById('spotify-container');
-                if (data.listening_to_spotify && data.spotify) {
-                    spotifyContainer.style.display = 'flex';
-                    document.getElementById('spotify-art').src = data.spotify.album_art_url;
-                    document.getElementById('spotify-song').textContent = data.spotify.song;
-                    document.getElementById('spotify-artist').textContent = data.spotify.artist;
-
-                    const total = data.spotify.timestamps.end - data.spotify.timestamps.start;
-                    const current = Date.now() - data.spotify.timestamps.start;
-                    const pct = Math.max(0, Math.min((current / total) * 100, 100));
-                    document.getElementById('spotify-progress').style.width = `${pct}%`;
-                } else {
-                    spotifyContainer.style.display = 'none';
-                }
-            } catch (e) {}
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            updateLocalTime();
-            setInterval(updateLocalTime, 1000);
-            fetchGitHubData();
-            updateLanyard();
-            setInterval(updateLanyard, 3000);
-        });
-    </script>
+    window.addEventListener('DOMContentLoaded', () => {
+        updateLocalTime();
+        setInterval(updateLocalTime, 1000);
+        fetchGitHubData();
+        updateLanyard();
+        setInterval(updateLanyard, 3000);
+    });
+</script>
 </body>
 </html>
