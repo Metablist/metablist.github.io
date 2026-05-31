@@ -281,6 +281,28 @@
             min-width: 0;
         }
 
+        .spotify-label {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .spotify-label svg {
+            width: 13px;
+            height: 13px;
+            fill: #1ed760;
+            flex-shrink: 0;
+        }
+
+        .spotify-label span {
+            font-size: 0.72rem;
+            color: #1ed760;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
         .spotify-details strong {
             font-size: 1.15rem;
             margin-bottom: 0.2rem;
@@ -289,7 +311,7 @@
             text-overflow: ellipsis;
         }
 
-        .spotify-details span {
+        .spotify-details .spotify-artist {
             color: var(--text-dim);
             font-size: 0.95rem;
             white-space: nowrap;
@@ -582,8 +604,14 @@
             <div id="spotify-container">
                 <img id="spotify-art" src="" alt="Album Art">
                 <div class="spotify-details">
+                    <div class="spotify-label">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+                        </svg>
+                        <span>Listening on Spotify</span>
+                    </div>
                     <strong id="spotify-song">Loading...</strong>
-                    <span id="spotify-artist">Loading...</span>
+                    <span class="spotify-artist" id="spotify-artist">Loading...</span>
                     <div class="spotify-bar-bg">
                         <div class="spotify-bar-fill" id="spotify-progress"></div>
                     </div>
@@ -646,160 +674,155 @@
         </a>
     </div>
 
- <script>
-    const ghUsername = 'Metablist';
-    const discordId = '1401860400957489232';
-    const palette = ['#ffffff', '#cccccc', '#999999', '#666666', '#333333'];
+    <script>
+        const ghUsername = 'Metablist';
+        const discordId = '1401860400957489232';
+        const palette = ['#ffffff', '#cccccc', '#999999', '#666666', '#333333'];
 
-    let spotifyData = null;
-    let progressInterval = null;
+        let spotifyData = null;
+        let progressInterval = null;
 
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            const loader = document.getElementById('loader');
-            loader.style.opacity = '0';
-            loader.style.visibility = 'hidden';
-        }, 1200);
-    });
-
-    function updateLocalTime() {
-        const now = new Date();
-        const timeString = now.toLocaleTimeString('en-GB', {
-            timeZone: 'Europe/Berlin',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
-        });
-        document.getElementById('local-time').textContent = `${timeString} CET`;
-    }
-
-    function updateSpotifyProgress() {
-        if (!spotifyData) return;
-        const total = spotifyData.timestamps.end - spotifyData.timestamps.start;
-        const current = Date.now() - spotifyData.timestamps.start;
-        const pct = Math.max(0, Math.min((current / total) * 100, 100));
-        document.getElementById('spotify-progress').style.width = `${pct}%`;
-    }
-
-    async function fetchGitHubData() {
-        try {
-            const res = await fetch(`https://api.github.com/users/${ghUsername}/repos?per_page=100`);
-            if (!res.ok) return;
-            const repos = await res.json();
-
-            const filtered = repos.filter(r => !r.fork && r.name.toLowerCase() !== `${ghUsername.toLowerCase()}.github.io`);
-            if (filtered.length === 0) return;
-
-            document.getElementById('total-repos').textContent = filtered.length;
-
-            const mostStarred = filtered.reduce((max, r) => r.stargazers_count > max.stargazers_count ? r : max, filtered[0]);
-            document.getElementById('starred-repo-name').textContent = mostStarred.name;
-            const sLink = document.getElementById('starred-repo-link');
-            sLink.href = mostStarred.html_url;
-            sLink.style.display = 'inline-flex';
-
-            const latest = [...filtered].sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))[0];
-            document.getElementById('latest-repo-name').textContent = latest.name;
-            const lLink = document.getElementById('latest-repo-link');
-            lLink.href = latest.html_url;
-            lLink.style.display = 'inline-flex';
-
-            const langCounts = {};
-            let totalLangs = 0;
-            filtered.forEach(r => {
-                if (r.language) {
-                    langCounts[r.language] = (langCounts[r.language] || 0) + 1;
-                    totalLangs++;
-                }
-            });
-
-            const sortedLangs = Object.entries(langCounts).sort((a, b) => b[1] - a[1]);
-            const barContainer = document.getElementById('lang-bar');
-            const legendContainer = document.getElementById('lang-legend');
-
+        window.addEventListener('load', () => {
             setTimeout(() => {
-                sortedLangs.forEach((lang, index) => {
-                    const color = palette[index % palette.length];
-                    const percentage = (lang[1] / totalLangs) * 100;
+                const loader = document.getElementById('loader');
+                loader.style.opacity = '0';
+                loader.style.visibility = 'hidden';
+            }, 1200);
+        });
 
-                    const segment = document.createElement('div');
-                    segment.className = 'lang-segment';
-                    segment.style.backgroundColor = color;
-                    barContainer.appendChild(segment);
+        function updateLocalTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-GB', {
+                timeZone: 'Europe/Berlin',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('local-time').textContent = `${timeString} CET`;
+        }
 
-                    setTimeout(() => { segment.style.width = `${percentage}%`; }, 100);
+        function updateSpotifyProgress() {
+            if (!spotifyData) return;
+            const total = spotifyData.timestamps.end - spotifyData.timestamps.start;
+            const current = Date.now() - spotifyData.timestamps.start;
+            const pct = Math.max(0, Math.min((current / total) * 100, 100));
+            document.getElementById('spotify-progress').style.width = `${pct}%`;
+        }
 
-                    const legendItem = document.createElement('div');
-                    legendItem.className = 'legend-item';
-                    legendItem.style.animationDelay = `${index * 0.15 + 1.8}s`;
-                    legendItem.innerHTML = `<div class="legend-dot" style="background-color: ${color}; color: ${color}"></div>${lang[0]} (${Math.round(percentage)}%)`;
-                    legendContainer.appendChild(legendItem);
+        async function fetchGitHubData() {
+            try {
+                const res = await fetch(`https://api.github.com/users/${ghUsername}/repos?per_page=100`);
+                if (!res.ok) return;
+                const repos = await res.json();
+
+                const filtered = repos.filter(r => !r.fork && r.name.toLowerCase() !== `${ghUsername.toLowerCase()}.github.io`);
+                if (filtered.length === 0) return;
+
+                document.getElementById('total-repos').textContent = filtered.length;
+
+                const mostStarred = filtered.reduce((max, r) => r.stargazers_count > max.stargazers_count ? r : max, filtered[0]);
+                document.getElementById('starred-repo-name').textContent = mostStarred.name;
+                const sLink = document.getElementById('starred-repo-link');
+                sLink.href = mostStarred.html_url;
+                sLink.style.display = 'inline-flex';
+
+                const latest = [...filtered].sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))[0];
+                document.getElementById('latest-repo-name').textContent = latest.name;
+                const lLink = document.getElementById('latest-repo-link');
+                lLink.href = latest.html_url;
+                lLink.style.display = 'inline-flex';
+
+                const langCounts = {};
+                let totalLangs = 0;
+                filtered.forEach(r => {
+                    if (r.language) {
+                        langCounts[r.language] = (langCounts[r.language] || 0) + 1;
+                        totalLangs++;
+                    }
                 });
-            }, 1800);
 
-        } catch (e) {}
-    }
+                const sortedLangs = Object.entries(langCounts).sort((a, b) => b[1] - a[1]);
+                const barContainer = document.getElementById('lang-bar');
+                const legendContainer = document.getElementById('lang-legend');
 
-    async function updateLanyard() {
-        try {
-            const res = await fetch(`https://api.lanyard.rest/v1/users/${discordId}`);
-            if (!res.ok) return;
-            const json = await res.json();
-            const data = json.data;
-            if (!data) return;
+                setTimeout(() => {
+                    sortedLangs.forEach((lang, index) => {
+                        const color = palette[index % palette.length];
+                        const percentage = (lang[1] / totalLangs) * 100;
 
-            // Avatar
-            if (data.discord_user?.avatar) {
-                document.getElementById('discord-avatar').src =
-                    `https://cdn.discordapp.com/avatars/${discordId}/${data.discord_user.avatar}.png`;
-            }
+                        const segment = document.createElement('div');
+                        segment.className = 'lang-segment';
+                        segment.style.backgroundColor = color;
+                        barContainer.appendChild(segment);
 
-            // Status dot
-            const colors = { online: '#22c55e', idle: '#f59e0b', dnd: '#ef4444', offline: '#737373' };
-            const statusDot = document.getElementById('discord-status');
-            statusDot.style.backgroundColor = colors[data.discord_status] || colors.offline;
-            statusDot.style.animation = data.discord_status === 'offline' ? 'none' : 'pulseRing 2s infinite';
+                        setTimeout(() => { segment.style.width = `${percentage}%`; }, 100);
 
-            // Activity text
-            const nonSpotifyAct = data.activities?.find(a => a.type === 0) ?? null;
-            document.getElementById('discord-activity-text').textContent =
-                nonSpotifyAct ? `Playing ${nonSpotifyAct.name}` : 'MouseTweak';
+                        const legendItem = document.createElement('div');
+                        legendItem.className = 'legend-item';
+                        legendItem.style.animationDelay = `${index * 0.15 + 1.8}s`;
+                        legendItem.innerHTML = `<div class="legend-dot" style="background-color: ${color}; color: ${color}"></div>${lang[0]} (${Math.round(percentage)}%)`;
+                        legendContainer.appendChild(legendItem);
+                    });
+                }, 1800);
 
-            // Spotify
-            const spotifyContainer = document.getElementById('spotify-container');
-            if (data.listening_to_spotify && data.spotify) {
-                const sp = data.spotify;
-                spotifyData = sp;
+            } catch (e) {}
+        }
 
-                document.getElementById('spotify-art').src = sp.album_art_url ?? '';
-                document.getElementById('spotify-song').textContent = sp.song ?? 'Unknown';
-                document.getElementById('spotify-artist').textContent = sp.artist ?? 'Unknown';
+        async function updateLanyard() {
+            try {
+                const res = await fetch(`https://api.lanyard.rest/v1/users/${discordId}`);
+                if (!res.ok) return;
+                const json = await res.json();
+                const data = json.data;
+                if (!data) return;
 
-                spotifyContainer.style.display = 'flex';
-
-                // Start live progress ticker if not already running
-                if (!progressInterval) {
-                    progressInterval = setInterval(updateSpotifyProgress, 1000);
+                if (data.discord_user?.avatar) {
+                    document.getElementById('discord-avatar').src =
+                        `https://cdn.discordapp.com/avatars/${discordId}/${data.discord_user.avatar}.png`;
                 }
-                updateSpotifyProgress();
-            } else {
-                spotifyData = null;
-                spotifyContainer.style.display = 'none';
-                if (progressInterval) {
-                    clearInterval(progressInterval);
-                    progressInterval = null;
-                }
-            }
-        } catch (e) {}
-    }
 
-    window.addEventListener('DOMContentLoaded', () => {
-        updateLocalTime();
-        setInterval(updateLocalTime, 1000);
-        fetchGitHubData();
-        updateLanyard();
-        setInterval(updateLanyard, 3000);
-    });
-</script>
+                const colors = { online: '#22c55e', idle: '#f59e0b', dnd: '#ef4444', offline: '#737373' };
+                const statusDot = document.getElementById('discord-status');
+                statusDot.style.backgroundColor = colors[data.discord_status] || colors.offline;
+                statusDot.style.animation = data.discord_status === 'offline' ? 'none' : 'pulseRing 2s infinite';
+
+                const nonSpotifyAct = data.activities?.find(a => a.type === 0) ?? null;
+                document.getElementById('discord-activity-text').textContent =
+                    nonSpotifyAct ? `Playing ${nonSpotifyAct.name}` : 'MouseTweak';
+
+                const spotifyContainer = document.getElementById('spotify-container');
+                if (data.listening_to_spotify && data.spotify) {
+                    const sp = data.spotify;
+                    spotifyData = sp;
+
+                    document.getElementById('spotify-art').src = sp.album_art_url ?? '';
+                    document.getElementById('spotify-song').textContent = sp.song ?? 'Unknown';
+                    document.getElementById('spotify-artist').textContent = sp.artist ?? 'Unknown';
+
+                    spotifyContainer.style.display = 'flex';
+
+                    if (!progressInterval) {
+                        progressInterval = setInterval(updateSpotifyProgress, 1000);
+                    }
+                    updateSpotifyProgress();
+                } else {
+                    spotifyData = null;
+                    spotifyContainer.style.display = 'none';
+                    if (progressInterval) {
+                        clearInterval(progressInterval);
+                        progressInterval = null;
+                    }
+                }
+            } catch (e) {}
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            updateLocalTime();
+            setInterval(updateLocalTime, 1000);
+            fetchGitHubData();
+            updateLanyard();
+            setInterval(updateLanyard, 3000);
+        });
+    </script>
 </body>
 </html>
