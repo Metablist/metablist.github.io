@@ -18,27 +18,11 @@
             --radius: 16px;
         }
 
-        ::selection {
-            background: rgba(255, 255, 255, 0.2);
-            color: #ffffff;
-        }
-
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--bg);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
+        ::selection { background: rgba(255,255,255,0.2); color: #ffffff; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
 
         body {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -52,7 +36,8 @@
             align-items: center;
             min-height: 100vh;
             position: relative;
-            background-image: 
+            overflow-x: hidden;
+            background-image:
                 radial-gradient(circle at 15% 0%, rgba(255,255,255,0.03), transparent 25%),
                 radial-gradient(circle at 85% 100%, rgba(255,255,255,0.03), transparent 25%);
         }
@@ -61,27 +46,47 @@
             content: "";
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background-image: 
-                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), 
-                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-image:
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
             background-size: 40px 40px;
             z-index: -1;
             animation: panGrid 20s linear infinite;
             pointer-events: none;
         }
 
+        #particle-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            z-index: 0;
+            animation: orbFloat 12s ease-in-out infinite alternate;
+        }
+        .orb-1 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%); top: -100px; left: -100px; animation-duration: 14s; }
+        .orb-2 { width: 350px; height: 350px; background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%); bottom: -80px; right: -80px; animation-duration: 18s; animation-delay: -6s; }
+        .orb-3 { width: 250px; height: 250px; background: radial-gradient(circle, rgba(30,215,96,0.04) 0%, transparent 70%); top: 50%; left: 60%; animation-duration: 20s; animation-delay: -10s; }
+
         #loader {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
             background-color: var(--bg);
             z-index: 9999;
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
+            flex-direction: column;
+            gap: 1.5rem;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
         }
 
         .loader-text {
@@ -89,37 +94,24 @@
             font-size: 1.25rem;
             letter-spacing: 0.2em;
             color: var(--text-main);
-            text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+            text-shadow: 0 0 15px rgba(255,255,255,0.4);
         }
 
-        .blinker {
-            animation: blink 1s step-end infinite;
-        }
+        .loader-bar-bg { width: 200px; height: 2px; background: rgba(255,255,255,0.1); border-radius: 1px; overflow: hidden; }
+        .loader-bar-fill { height: 100%; width: 0%; background: #ffffff; box-shadow: 0 0 10px rgba(255,255,255,0.8); animation: loaderFill 1s ease-out forwards; }
+        .blinker { animation: blink 1s step-end infinite; }
 
-        @keyframes blink { 
-            50% { opacity: 0; } 
-        }
-
-        @keyframes panGrid {
-            0% { background-position: 0 0; }
-            100% { background-position: -40px -40px; }
-        }
-
-        @keyframes fadeUp {
-            0% { opacity: 0; transform: translateY(30px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes pulseRing {
-            0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
-        }
-
-        @keyframes glowPulse {
-            0% { box-shadow: 0 0 5px rgba(255,255,255,0.1); }
-            100% { box-shadow: 0 0 15px rgba(255,255,255,0.3); }
-        }
+        @keyframes blink { 50% { opacity: 0; } }
+        @keyframes loaderFill { 0% { width: 0%; } 100% { width: 100%; } }
+        @keyframes panGrid { 0% { background-position: 0 0; } 100% { background-position: -40px -40px; } }
+        @keyframes fadeUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes pulseRing { 0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.4); } 70% { box-shadow: 0 0 0 10px rgba(255,255,255,0); } 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); } }
+        @keyframes glowPulse { 0% { box-shadow: 0 0 5px rgba(255,255,255,0.1); } 100% { box-shadow: 0 0 15px rgba(255,255,255,0.3); } }
+        @keyframes orbFloat { 0% { transform: translate(0,0) scale(1); } 50% { transform: translate(30px,20px) scale(1.05); } 100% { transform: translate(-20px,40px) scale(0.95); } }
+        @keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
+        @keyframes avatarGlow { 0% { box-shadow: 0 0 0 0 rgba(255,255,255,0); } 50% { box-shadow: 0 0 20px 4px rgba(255,255,255,0.12); } 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); } }
+        @keyframes scanline { 0% { transform: translateY(-100%); } 100% { transform: translateY(400%); } }
+        @keyframes slideDown { 0% { opacity: 0; transform: translateY(-8px); } 100% { opacity: 1; transform: translateY(0); } }
 
         .container {
             width: 100%;
@@ -132,9 +124,9 @@
         }
 
         .card {
-            background: rgba(10, 10, 10, 0.6);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(10,10,10,0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--border);
             border-radius: var(--radius);
             padding: 2.5rem;
@@ -142,18 +134,37 @@
             box-shadow: var(--glow), inset 0 0 20px rgba(255,255,255,0.01);
             opacity: 0;
             animation: fadeUp 0.8s ease-out forwards;
+            position: relative;
+            overflow: hidden;
         }
 
+        .card::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 30%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.03), transparent);
+            transform: translateY(-100%);
+            pointer-events: none;
+        }
+
+        .card:hover::after { animation: scanline 0.6s ease-out forwards; }
         .card:nth-child(1) { animation-delay: 1.4s; }
         .card:nth-child(2) { animation-delay: 1.55s; }
         .card:nth-child(3) { animation-delay: 1.7s; }
 
         .card:hover {
             border-color: var(--border-hover);
-            box-shadow: var(--glow-strong), inset 0 0 20px rgba(255,255,255,0.02);
-            transform: translateY(-4px);
-            background: rgba(17, 17, 17, 0.7);
+            box-shadow: var(--glow-strong), inset 0 0 40px rgba(255,255,255,0.03);
+            transform: translateY(-6px);
+            background: rgba(17,17,17,0.75);
         }
+
+        .card-corner { position: absolute; width: 20px; height: 20px; pointer-events: none; }
+        .card-corner-tl { top: -1px; left: -1px; border-top: 2px solid rgba(255,255,255,0.4); border-left: 2px solid rgba(255,255,255,0.4); border-radius: var(--radius) 0 0 0; }
+        .card-corner-tr { top: -1px; right: -1px; border-top: 2px solid rgba(255,255,255,0.4); border-right: 2px solid rgba(255,255,255,0.4); border-radius: 0 var(--radius) 0 0; }
+        .card-corner-bl { bottom: -1px; left: -1px; border-bottom: 2px solid rgba(255,255,255,0.4); border-left: 2px solid rgba(255,255,255,0.4); border-radius: 0 0 0 var(--radius); }
+        .card-corner-br { bottom: -1px; right: -1px; border-bottom: 2px solid rgba(255,255,255,0.4); border-right: 2px solid rgba(255,255,255,0.4); border-radius: 0 0 var(--radius) 0; }
 
         .discord-profile {
             display: flex;
@@ -162,30 +173,22 @@
             margin-bottom: 2rem;
         }
 
-        .avatar-wrapper {
-            position: relative;
-            flex-shrink: 0;
-        }
+        .avatar-wrapper { position: relative; flex-shrink: 0; }
 
         #discord-avatar {
-            width: 96px;
-            height: 96px;
+            width: 96px; height: 96px;
             border-radius: 50%;
             border: 2px solid var(--border);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s;
+            animation: avatarGlow 4s ease-in-out infinite;
         }
 
-        .card:hover #discord-avatar {
-            transform: scale(1.08) rotate(-5deg);
-            border-color: rgba(255,255,255,0.3);
-        }
+        .card:hover #discord-avatar { transform: scale(1.1) rotate(-6deg); border-color: rgba(255,255,255,0.5); }
 
         .status-indicator {
             position: absolute;
-            bottom: 4px;
-            right: 4px;
-            width: 24px;
-            height: 24px;
+            bottom: 4px; right: 4px;
+            width: 24px; height: 24px;
             border-radius: 50%;
             border: 4px solid var(--surface);
             background-color: #737373;
@@ -198,17 +201,25 @@
             font-size: 2.5rem;
             font-weight: 800;
             letter-spacing: -0.05em;
-            text-shadow: 0 0 20px rgba(255,255,255,0.3);
-            background: linear-gradient(to right, #ffffff, #888888);
+            background: linear-gradient(90deg, #ffffff 0%, #888888 50%, #ffffff 100%);
+            background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            animation: shimmer 4s linear infinite;
         }
 
         .user-info p {
             margin: 0.25rem 0 0 0;
             color: var(--text-dim);
-            font-size: 1.15rem;
+            font-size: 1.05rem;
             font-weight: 500;
+        }
+
+        .user-info p span.username-tag {
+            font-family: monospace;
+            color: rgba(255,255,255,0.4);
+            font-size: 0.9rem;
+            margin-left: 0.3rem;
         }
 
         .location-time {
@@ -218,32 +229,77 @@
             margin-top: 0.75rem;
             font-size: 0.9rem;
             color: var(--text-dim);
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255,255,255,0.03);
             padding: 0.4rem 0.8rem;
             border-radius: 20px;
             border: 1px solid var(--border);
             width: fit-content;
+            transition: border-color 0.3s, background 0.3s;
         }
 
-        .location-time svg {
-            width: 14px;
-            height: 14px;
-            fill: currentColor;
+        .location-time:hover { border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.06); }
+        .location-time svg { width: 14px; height: 14px; fill: currentColor; }
+        .location-time .dot { color: var(--border-hover); }
+        #local-time { font-family: monospace; font-size: 0.95rem; color: var(--text-main); }
+
+        /* Activity row below Spotify */
+        #activity-container {
+            display: none;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 0.85rem;
+            padding: 0.85rem 1.1rem;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            animation: slideDown 0.3s ease forwards;
+            transition: border-color 0.3s, background 0.3s;
         }
 
-        .location-time .dot {
-            color: var(--border-hover);
+        #activity-container:hover { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.2); }
+
+        #activity-icon {
+            width: 36px; height: 36px;
+            border-radius: 6px;
+            object-fit: cover;
+            flex-shrink: 0;
+            display: none;
         }
 
-        #local-time {
-            font-family: monospace;
-            font-size: 0.95rem;
-            color: var(--text-main);
+        .activity-icon-fallback {
+            width: 36px; height: 36px;
+            border-radius: 6px;
+            background: rgba(255,255,255,0.06);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .activity-icon-fallback svg { width: 18px; height: 18px; fill: var(--text-dim); }
+
+        .activity-details { display: flex; flex-direction: column; min-width: 0; }
+
+        .activity-details strong {
+            font-size: 0.9rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .activity-details span {
+            font-size: 0.78rem;
+            color: var(--text-dim);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-top: 0.1rem;
         }
 
         #spotify-container {
             display: none;
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(255,255,255,0.02);
             border: 1px solid var(--border);
             border-radius: 12px;
             padding: 1.25rem;
@@ -254,254 +310,97 @@
             overflow: hidden;
         }
 
-        #spotify-container:hover {
-            background: rgba(255, 255, 255, 0.04);
-            border-color: rgba(30, 215, 96, 0.5);
-            box-shadow: 0 4px 20px rgba(30, 215, 96, 0.1);
-        }
-
-        #spotify-art {
-            width: 72px;
-            height: 72px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            flex-shrink: 0;
-        }
-
-        #spotify-container:hover #spotify-art {
-            transform: scale(1.08) rotate(3deg);
-        }
-
-        .spotify-details {
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-            z-index: 1;
-            min-width: 0;
-        }
-
-        .spotify-label {
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .spotify-label svg {
-            width: 13px;
-            height: 13px;
-            fill: #1ed760;
-            flex-shrink: 0;
-        }
-
-        .spotify-label span {
-            font-size: 0.72rem;
-            color: #1ed760;
-            font-weight: 700;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-        }
-
-        .spotify-details strong {
-            font-size: 1.15rem;
-            margin-bottom: 0.2rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .spotify-details .spotify-artist {
-            color: var(--text-dim);
-            font-size: 0.95rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .spotify-bar-bg {
-            width: 100%;
-            height: 6px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 3px;
-            margin-top: 1rem;
-            overflow: hidden;
-        }
-
-        .spotify-bar-fill {
-            height: 100%;
-            background: #1ed760;
-            width: 0%;
-            box-shadow: 0 0 10px rgba(30, 215, 96, 0.8);
-            transition: width 1s linear;
-        }
-
-        h2 {
-            font-size: 1.35rem;
-            margin: 0 0 1.75rem 0;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            font-weight: 600;
-        }
-
-        h2::after {
-            content: "";
-            flex-grow: 1;
-            height: 1px;
-            background: linear-gradient(90deg, var(--border), transparent);
-        }
-
-        .skills-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.85rem;
-        }
-
-        .skill-tag {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border);
-            padding: 0.6rem 1.25rem;
-            border-radius: 24px;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            cursor: default;
-        }
-
-        .skill-tag:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255,255,255,0.5);
-            transform: translateY(-2px);
-        }
-
-        .learning-tag {
-            border-color: rgba(255,255,255,0.6);
-            background: rgba(255,255,255,0.08);
-            animation: glowPulse 3s infinite alternate;
-        }
-
-        .lang-chart-wrapper {
-            margin-top: 2.5rem;
-        }
-
-        .lang-chart-wrapper p {
-            margin: 0 0 1rem 0;
-            font-size: 0.9rem;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            font-weight: 600;
-        }
-
-        .lang-bar {
-            width: 100%;
-            height: 14px;
-            border-radius: 7px;
-            display: flex;
-            overflow: hidden;
-            background: rgba(255,255,255,0.05);
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
-        }
-
-        .lang-segment {
-            height: 100%;
-            width: 0%;
-            transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-
-        .lang-legend {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.25rem;
-            margin-top: 1rem;
-            font-size: 0.9rem;
-            color: var(--text-dim);
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            opacity: 0;
-            animation: fadeUp 0.5s ease forwards;
-        }
-
-        .legend-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            box-shadow: 0 0 8px currentColor;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.25rem;
-        }
-
-        .stat-box {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.75rem;
-            display: flex;
-            flex-direction: column;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-box::before {
+        #spotify-container::before {
             content: "";
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+            inset: 0;
+            background: linear-gradient(135deg, rgba(30,215,96,0.04) 0%, transparent 60%);
             opacity: 0;
             transition: opacity 0.3s;
             pointer-events: none;
         }
 
-        .stat-box:hover {
-            border-color: rgba(255,255,255,0.2);
-            transform: translateY(-3px);
+        #spotify-container:hover::before { opacity: 1; }
+        #spotify-container:hover { background: rgba(255,255,255,0.04); border-color: rgba(30,215,96,0.5); box-shadow: 0 4px 30px rgba(30,215,96,0.12); }
+
+        #spotify-art {
+            width: 72px; height: 72px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+            flex-shrink: 0;
         }
 
-        .stat-box:hover::before { opacity: 1; }
+        #spotify-container:hover #spotify-art { transform: scale(1.1) rotate(4deg); box-shadow: 0 8px 24px rgba(0,0,0,0.6), 0 0 20px rgba(30,215,96,0.2); }
 
-        .stat-box span {
-            font-size: 0.85rem;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 0.75rem;
-            font-weight: 600;
-        }
+        .spotify-details { display: flex; flex-direction: column; flex-grow: 1; z-index: 1; min-width: 0; }
 
-        .stat-box strong {
-            font-size: 1.5rem;
-            word-break: break-word;
-            line-height: 1.2;
-            font-weight: 700;
-        }
+        .spotify-label { display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.5rem; }
+        .spotify-label svg { width: 13px; height: 13px; fill: #1ed760; flex-shrink: 0; }
+        .spotify-label span { font-size: 0.72rem; color: #1ed760; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
 
-        .stat-box a {
-            margin-top: 1.25rem;
-            color: var(--text-main);
+        .spotify-details strong { font-size: 1.15rem; margin-bottom: 0.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .spotify-details .spotify-artist { color: var(--text-dim); font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .spotify-bar-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-top: 1rem; overflow: hidden; }
+        .spotify-bar-fill { height: 100%; background: linear-gradient(90deg, #1ed760, #17a349); width: 0%; box-shadow: 0 0 12px rgba(30,215,96,0.9); transition: width 1s linear; border-radius: 3px; }
+
+        h2 { font-size: 1.35rem; margin: 0 0 1.75rem 0; display: flex; align-items: center; gap: 1rem; font-weight: 600; }
+        h2::after { content: ""; flex-grow: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); }
+
+        .skills-container { display: flex; flex-wrap: wrap; gap: 0.85rem; }
+
+        .skill-tag {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            padding: 0.6rem 1.25rem;
+            border-radius: 24px;
             font-size: 0.95rem;
-            text-decoration: none;
-            opacity: 0.5;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
             font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: default;
+            position: relative;
+            overflow: hidden;
         }
 
-        .stat-box a:hover {
-            opacity: 1;
-            text-shadow: 0 0 12px rgba(255,255,255,0.8);
-            transform: translateX(4px);
+        .skill-tag::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent); transform: translateX(-100%); transition: transform 0.4s ease; }
+        .skill-tag:hover::before { transform: translateX(100%); }
+        .skill-tag:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.5); transform: translateY(-3px) scale(1.04); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+        .learning-tag { border-color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.08); animation: glowPulse 3s infinite alternate; }
+
+        .lang-chart-wrapper { margin-top: 2.5rem; }
+        .lang-chart-wrapper p { margin: 0 0 1rem 0; font-size: 0.9rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
+        .lang-bar { width: 100%; height: 14px; border-radius: 7px; display: flex; overflow: hidden; background: rgba(255,255,255,0.05); box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); }
+        .lang-segment { height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1); }
+        .lang-legend { display: flex; flex-wrap: wrap; gap: 1.25rem; margin-top: 1rem; font-size: 0.9rem; color: var(--text-dim); }
+        .legend-item { display: flex; align-items: center; gap: 0.5rem; opacity: 0; animation: fadeUp 0.5s ease forwards; transition: color 0.2s; cursor: default; }
+        .legend-item:hover { color: var(--text-main); }
+        .legend-dot { width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 8px currentColor; transition: transform 0.2s; }
+        .legend-item:hover .legend-dot { transform: scale(1.4); }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; }
+
+        .stat-box {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.75rem;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
         }
+
+        .stat-box::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 100%); opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+        .stat-box::after { content: ""; position: absolute; bottom: 0; left: 0; width: 0%; height: 2px; background: linear-gradient(90deg, rgba(255,255,255,0.5), transparent); transition: width 0.4s ease; }
+        .stat-box:hover { border-color: rgba(255,255,255,0.25); transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+        .stat-box:hover::before { opacity: 1; }
+        .stat-box:hover::after { width: 100%; }
+        .stat-box span { font-size: 0.85rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem; font-weight: 600; }
+        .stat-box strong { font-size: 1.5rem; word-break: break-word; line-height: 1.2; font-weight: 700; }
+        .stat-box a { margin-top: 1.25rem; color: var(--text-main); font-size: 0.95rem; text-decoration: none; opacity: 0.5; transition: all 0.3s; display: inline-flex; align-items: center; font-weight: 500; }
+        .stat-box a:hover { opacity: 1; text-shadow: 0 0 12px rgba(255,255,255,0.8); transform: translateX(4px); }
 
         .links-grid {
             display: grid;
@@ -510,7 +409,7 @@
             width: 100%;
             max-width: 800px;
             margin-top: 1.5rem;
-            opacity: 0; 
+            opacity: 0;
             animation: fadeUp 0.8s ease-out 1.85s forwards;
             position: relative;
             z-index: 1;
@@ -521,7 +420,7 @@
             align-items: center;
             justify-content: center;
             gap: 0.75rem;
-            background: rgba(10, 10, 10, 0.6);
+            background: rgba(10,10,10,0.6);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--border);
@@ -532,58 +431,66 @@
             font-weight: 600;
             font-size: 1.05rem;
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
         }
 
-        .link-btn:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255,255,255,0.5);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.4), 0 0 15px rgba(255,255,255,0.1);
-            transform: translateY(-5px) scale(1.02);
+        .link-btn::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent); transform: translateX(-100%); transition: transform 0.5s ease; }
+        .link-btn:hover::before { transform: translateX(100%); }
+        .link-btn:hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.5); box-shadow: 0 12px 28px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.08); transform: translateY(-6px) scale(1.03); }
+        .link-btn svg, .link-btn img { width: 22px; height: 22px; fill: currentColor; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .link-btn:hover svg, .link-btn:hover img { transform: scale(1.2) rotate(10deg); }
+
+        #view-counter {
+            position: fixed;
+            bottom: 1.5rem; left: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            z-index: 10;
+            opacity: 0;
+            animation: fadeUp 0.8s ease-out 2s forwards;
+            transition: color 0.3s;
+            user-select: none;
         }
 
-        .link-btn svg, .link-btn img {
-            width: 22px;
-            height: 22px;
-            fill: currentColor;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .link-btn:hover svg, .link-btn:hover img {
-            transform: scale(1.15) rotate(8deg);
-        }
+        #view-counter:hover { color: var(--text-main); }
+        #view-counter svg { width: 15px; height: 15px; fill: currentColor; flex-shrink: 0; }
+        #view-count { font-family: monospace; font-size: 0.9rem; }
 
         @media (max-width: 650px) {
             body { padding: 2rem 1rem; }
             .card { padding: 1.5rem; }
-            .discord-profile {
-                flex-direction: column;
-                text-align: center;
-                gap: 1rem;
-            }
+            .discord-profile { flex-direction: column; text-align: center; gap: 1rem; }
             .location-time { margin: 0.75rem auto 0 auto; }
-            #spotify-container {
-                flex-direction: column;
-                text-align: center;
-            }
-            .spotify-details {
-                align-items: center;
-                width: 100%;
-            }
-            .stats-grid, .links-grid {
-                grid-template-columns: 1fr;
-            }
+            #spotify-container { flex-direction: column; text-align: center; }
+            .spotify-details { align-items: center; width: 100%; }
+            .stats-grid, .links-grid { grid-template-columns: 1fr; }
+            #view-counter { bottom: 1rem; left: 1rem; }
         }
     </style>
 </head>
 <body>
 
+    <canvas id="particle-canvas"></canvas>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
     <div id="loader">
         <div class="loader-text">INITIALIZING<span class="blinker">_</span></div>
+        <div class="loader-bar-bg"><div class="loader-bar-fill"></div></div>
     </div>
 
     <div class="container">
-        
+
         <div class="card">
+            <div class="card-corner card-corner-tl"></div>
+            <div class="card-corner card-corner-tr"></div>
+            <div class="card-corner card-corner-bl"></div>
+            <div class="card-corner card-corner-br"></div>
             <div class="discord-profile">
                 <div class="avatar-wrapper">
                     <img id="discord-avatar" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Discord Avatar">
@@ -591,7 +498,7 @@
                 </div>
                 <div class="user-info">
                     <h1>Metablist</h1>
-                    <p id="discord-activity-text">MouseTweak</p>
+                    <p id="discord-username-line">Loading...</p>
                     <div class="location-time">
                         <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
                         <span>Germany</span>
@@ -605,9 +512,7 @@
                 <img id="spotify-art" src="" alt="Album Art">
                 <div class="spotify-details">
                     <div class="spotify-label">
-                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
-                        </svg>
+                        <svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
                         <span>Listening on Spotify</span>
                     </div>
                     <strong id="spotify-song">Loading...</strong>
@@ -617,9 +522,24 @@
                     </div>
                 </div>
             </div>
+
+            <div id="activity-container">
+                <img id="activity-icon" src="" alt="">
+                <div class="activity-icon-fallback" id="activity-icon-fallback">
+                    <svg viewBox="0 0 24 24"><path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5S14.67 12 15.5 12s1.5.67 1.5 1.5S16.33 15 15.5 15zm4-3c-.83 0-1.5-.67-1.5-1.5S18.67 10 19.5 10s1.5.67 1.5 1.5S20.33 12 19.5 12z"/></svg>
+                </div>
+                <div class="activity-details">
+                    <strong id="activity-name">...</strong>
+                    <span id="activity-detail">...</span>
+                </div>
+            </div>
         </div>
 
         <div class="card">
+            <div class="card-corner card-corner-tl"></div>
+            <div class="card-corner card-corner-tr"></div>
+            <div class="card-corner card-corner-bl"></div>
+            <div class="card-corner card-corner-br"></div>
             <h2>Skills & Expertise</h2>
             <div class="skills-container">
                 <div class="skill-tag">Graphic Design</div>
@@ -627,9 +547,7 @@
                 <div class="skill-tag">Python</div>
                 <div class="skill-tag">C, C#, C++</div>
                 <div class="skill-tag learning-tag">Learning: Java</div>
-                <div class="skill-tag learning-tag">Learning: Video Editing</div>
             </div>
-
             <div class="lang-chart-wrapper">
                 <p>Most Used Languages</p>
                 <div class="lang-bar" id="lang-bar"></div>
@@ -638,6 +556,10 @@
         </div>
 
         <div class="card">
+            <div class="card-corner card-corner-tl"></div>
+            <div class="card-corner card-corner-tr"></div>
+            <div class="card-corner card-corner-bl"></div>
+            <div class="card-corner card-corner-br"></div>
             <h2>GitHub Insights</h2>
             <div class="stats-grid">
                 <div class="stat-box">
@@ -650,9 +572,9 @@
                     <a id="starred-repo-link" href="#" target="_blank" style="display:none;">View Repository →</a>
                 </div>
                 <div class="stat-box">
-                    <span>Latest Update</span>
-                    <strong id="latest-repo-name">...</strong>
-                    <a id="latest-repo-link" href="#" target="_blank" style="display:none;">View Repository →</a>
+                    <span>Latest Release</span>
+                    <strong id="latest-release-name">...</strong>
+                    <a id="latest-release-link" href="#" target="_blank" style="display:none;">View Release →</a>
                 </div>
             </div>
         </div>
@@ -674,6 +596,11 @@
         </a>
     </div>
 
+    <div id="view-counter">
+        <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+        <span id="view-count">...</span>
+    </div>
+
     <script>
         const ghUsername = 'Metablist';
         const discordId = '1401860400957489232';
@@ -682,6 +609,76 @@
         let spotifyData = null;
         let progressInterval = null;
 
+        // ── Particles ─────────────────────────────────────────────────────
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        function spawnParticle() {
+            return {
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                r: Math.random() * 1.5 + 0.3,
+                alpha: Math.random() * 0.5 + 0.1,
+                vx: (Math.random() - 0.5) * 0.15,
+                vy: -Math.random() * 0.2 - 0.05,
+                life: 1,
+                decay: Math.random() * 0.002 + 0.0005
+            };
+        }
+
+        function initParticles() {
+            particles = Array.from({ length: 120 }, spawnParticle);
+        }
+
+        function drawParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((p, i) => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= p.decay;
+                if (p.life <= 0 || p.y < -10) {
+                    particles[i] = spawnParticle();
+                    particles[i].y = canvas.height + 5;
+                }
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255,255,255,${p.alpha * p.life})`;
+                ctx.fill();
+            });
+            requestAnimationFrame(drawParticles);
+        }
+
+        window.addEventListener('resize', () => { resizeCanvas(); initParticles(); });
+        resizeCanvas();
+        initParticles();
+        drawParticles();
+
+        // ── Mouse parallax ────────────────────────────────────────────────
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const cx = rect.left + rect.width / 2;
+                const cy = rect.top + rect.height / 2;
+                const dx = (e.clientX - cx) / (rect.width / 2);
+                const dy = (e.clientY - cy) / (rect.height / 2);
+                card.style.transform = `translateY(-6px) rotateX(${-dy * 3}deg) rotateY(${dx * 3}deg)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = '';
+                card.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            });
+            card.addEventListener('mouseenter', () => {
+                card.style.transition = 'border-color 0.3s, box-shadow 0.3s, background 0.3s';
+            });
+        });
+
+        // ── Loader ────────────────────────────────────────────────────────
         window.addEventListener('load', () => {
             setTimeout(() => {
                 const loader = document.getElementById('loader');
@@ -690,17 +687,17 @@
             }, 1200);
         });
 
+        // ── Clock ─────────────────────────────────────────────────────────
         function updateLocalTime() {
             const now = new Date();
             const timeString = now.toLocaleTimeString('en-GB', {
                 timeZone: 'Europe/Berlin',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
             });
             document.getElementById('local-time').textContent = `${timeString} CET`;
         }
 
+        // ── Spotify progress ──────────────────────────────────────────────
         function updateSpotifyProgress() {
             if (!spotifyData) return;
             const total = spotifyData.timestamps.end - spotifyData.timestamps.start;
@@ -709,6 +706,7 @@
             document.getElementById('spotify-progress').style.width = `${pct}%`;
         }
 
+        // ── GitHub ────────────────────────────────────────────────────────
         async function fetchGitHubData() {
             try {
                 const res = await fetch(`https://api.github.com/users/${ghUsername}/repos?per_page=100`);
@@ -726,11 +724,27 @@
                 sLink.href = mostStarred.html_url;
                 sLink.style.display = 'inline-flex';
 
-                const latest = [...filtered].sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))[0];
-                document.getElementById('latest-repo-name').textContent = latest.name;
-                const lLink = document.getElementById('latest-repo-link');
-                lLink.href = latest.html_url;
-                lLink.style.display = 'inline-flex';
+                const releaseChecks = await Promise.allSettled(
+                    filtered.map(r =>
+                        fetch(`https://api.github.com/repos/${ghUsername}/${r.name}/releases/latest`)
+                            .then(res => res.ok ? res.json() : null)
+                            .catch(() => null)
+                    )
+                );
+
+                const releases = releaseChecks
+                    .map(r => r.status === 'fulfilled' ? r.value : null)
+                    .filter(r => r && r.published_at);
+
+                if (releases.length > 0) {
+                    const latest = releases.sort((a, b) => new Date(b.published_at) - new Date(a.published_at))[0];
+                    document.getElementById('latest-release-name').textContent = latest.tag_name || latest.name;
+                    const rLink = document.getElementById('latest-release-link');
+                    rLink.href = latest.html_url;
+                    rLink.style.display = 'inline-flex';
+                } else {
+                    document.getElementById('latest-release-name').textContent = 'No releases yet';
+                }
 
                 const langCounts = {};
                 let totalLangs = 0;
@@ -754,13 +768,12 @@
                         segment.className = 'lang-segment';
                         segment.style.backgroundColor = color;
                         barContainer.appendChild(segment);
-
                         setTimeout(() => { segment.style.width = `${percentage}%`; }, 100);
 
                         const legendItem = document.createElement('div');
                         legendItem.className = 'legend-item';
                         legendItem.style.animationDelay = `${index * 0.15 + 1.8}s`;
-                        legendItem.innerHTML = `<div class="legend-dot" style="background-color: ${color}; color: ${color}"></div>${lang[0]} (${Math.round(percentage)}%)`;
+                        legendItem.innerHTML = `<div class="legend-dot" style="background-color:${color};color:${color}"></div>${lang[0]} (${Math.round(percentage)}%)`;
                         legendContainer.appendChild(legendItem);
                     });
                 }, 1800);
@@ -768,6 +781,7 @@
             } catch (e) {}
         }
 
+        // ── Lanyard ───────────────────────────────────────────────────────
         async function updateLanyard() {
             try {
                 const res = await fetch(`https://api.lanyard.rest/v1/users/${discordId}`);
@@ -776,52 +790,94 @@
                 const data = json.data;
                 if (!data) return;
 
+                // Avatar
                 if (data.discord_user?.avatar) {
                     document.getElementById('discord-avatar').src =
                         `https://cdn.discordapp.com/avatars/${discordId}/${data.discord_user.avatar}.png`;
                 }
 
+                // Username line — fetch display name and username from Lanyard
+                const usernameLine = document.getElementById('discord-username-line');
+                if (data.discord_user) {
+                    const displayName = data.discord_user.display_name || data.discord_user.global_name || data.discord_user.username;
+                    const username = data.discord_user.username;
+                    usernameLine.innerHTML = `${displayName} <span class="username-tag">@${username}</span>`;
+                }
+
+                // Status dot
                 const colors = { online: '#22c55e', idle: '#f59e0b', dnd: '#ef4444', offline: '#737373' };
                 const statusDot = document.getElementById('discord-status');
                 statusDot.style.backgroundColor = colors[data.discord_status] || colors.offline;
                 statusDot.style.animation = data.discord_status === 'offline' ? 'none' : 'pulseRing 2s infinite';
 
-                const nonSpotifyAct = data.activities?.find(a => a.type === 0) ?? null;
-                document.getElementById('discord-activity-text').textContent =
-                    nonSpotifyAct ? `Playing ${nonSpotifyAct.name}` : 'MouseTweak';
-
+                // Spotify
                 const spotifyContainer = document.getElementById('spotify-container');
                 if (data.listening_to_spotify && data.spotify) {
                     const sp = data.spotify;
                     spotifyData = sp;
-
                     document.getElementById('spotify-art').src = sp.album_art_url ?? '';
                     document.getElementById('spotify-song').textContent = sp.song ?? 'Unknown';
                     document.getElementById('spotify-artist').textContent = sp.artist ?? 'Unknown';
-
                     spotifyContainer.style.display = 'flex';
-
-                    if (!progressInterval) {
-                        progressInterval = setInterval(updateSpotifyProgress, 1000);
-                    }
+                    if (!progressInterval) progressInterval = setInterval(updateSpotifyProgress, 1000);
                     updateSpotifyProgress();
                 } else {
                     spotifyData = null;
                     spotifyContainer.style.display = 'none';
-                    if (progressInterval) {
-                        clearInterval(progressInterval);
-                        progressInterval = null;
-                    }
+                    if (progressInterval) { clearInterval(progressInterval); progressInterval = null; }
                 }
+
+                // Game / app activity — only show when actually playing
+                const activityContainer = document.getElementById('activity-container');
+                const gameAct = data.activities?.find(a => a.type === 0) ?? null;
+
+                if (gameAct) {
+                    document.getElementById('activity-name').textContent = gameAct.name;
+
+                    // Detail line: state > details > fallback
+                    const detail = gameAct.state || gameAct.details || 'Playing';
+                    document.getElementById('activity-detail').textContent = detail;
+
+                    // Try to show app icon via Discord CDN
+                    const iconEl = document.getElementById('activity-icon');
+                    const fallbackEl = document.getElementById('activity-icon-fallback');
+                    if (gameAct.application_id && gameAct.assets?.large_image) {
+                        const iconUrl = `https://cdn.discordapp.com/app-assets/${gameAct.application_id}/${gameAct.assets.large_image}.png`;
+                        iconEl.src = iconUrl;
+                        iconEl.style.display = 'block';
+                        fallbackEl.style.display = 'none';
+                    } else {
+                        iconEl.style.display = 'none';
+                        fallbackEl.style.display = 'flex';
+                    }
+
+                    activityContainer.style.display = 'flex';
+                } else {
+                    activityContainer.style.display = 'none';
+                }
+
             } catch (e) {}
         }
 
+        // ── View counter ──────────────────────────────────────────────────
+        async function fetchViewCount() {
+            try {
+                const res = await fetch('https://hits.sh/metablist.github.io.json');
+                const data = await res.json();
+                document.getElementById('view-count').textContent = Number(data.total).toLocaleString();
+            } catch (e) {
+                document.getElementById('view-count').textContent = '—';
+            }
+        }
+
+        // ── Init ──────────────────────────────────────────────────────────
         window.addEventListener('DOMContentLoaded', () => {
             updateLocalTime();
             setInterval(updateLocalTime, 1000);
             fetchGitHubData();
             updateLanyard();
             setInterval(updateLanyard, 3000);
+            fetchViewCount();
         });
     </script>
 </body>
