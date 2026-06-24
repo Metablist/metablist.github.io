@@ -152,6 +152,7 @@
         .card:nth-child(1) { animation-delay: 1.4s; }
         .card:nth-child(2) { animation-delay: 1.55s; }
         .card:nth-child(3) { animation-delay: 1.7s; }
+        .card:nth-child(4) { animation-delay: 1.85s; }
 
         .card:hover {
             border-color: var(--border-hover);
@@ -356,6 +357,98 @@
         .spotify-bar-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-top: 1rem; overflow: hidden; }
         .spotify-bar-fill { height: 100%; background: linear-gradient(90deg, #1ed760, #17a349); width: 0%; box-shadow: 0 0 12px rgba(30,215,96,0.9); transition: width 1s linear; border-radius: 3px; }
 
+        /* Discord Server widget */
+        .discord-server-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .discord-server-name {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .discord-server-name svg { width: 20px; height: 20px; color: #5865F2; flex-shrink: 0; }
+
+        .discord-online-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            background: rgba(34,197,94,0.08);
+            border: 1px solid rgba(34,197,94,0.25);
+            padding: 0.4rem 0.85rem;
+            border-radius: 20px;
+            transition: border-color 0.3s, background 0.3s;
+        }
+
+        .discord-online-badge:hover { border-color: rgba(34,197,94,0.5); background: rgba(34,197,94,0.14); }
+
+        .discord-online-badge .online-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 6px #22c55e;
+            animation: pulseRing 2s infinite;
+        }
+
+        .discord-members-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.7rem;
+        }
+
+        .discord-member {
+            position: relative;
+            width: 44px; height: 44px;
+            flex-shrink: 0;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .discord-member:hover { transform: translateY(-4px) scale(1.08); z-index: 2; }
+
+        .discord-member img {
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            object-fit: cover;
+            background: rgba(255,255,255,0.05);
+            transition: border-color 0.3s;
+        }
+
+        .discord-member:hover img { border-color: rgba(255,255,255,0.5); }
+
+        .discord-member .member-status-dot {
+            position: absolute;
+            bottom: -2px; right: -2px;
+            width: 13px; height: 13px;
+            border-radius: 50%;
+            border: 2px solid var(--surface);
+        }
+
+        .discord-member-overflow {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            border: 2px dashed var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-dim);
+            flex-shrink: 0;
+        }
+
+        .discord-server-empty { color: var(--text-dim); font-size: 0.9rem; }
+
         h2 { font-size: 1.35rem; margin: 0 0 1.75rem 0; display: flex; align-items: center; gap: 1rem; font-weight: 600; }
         h2::after { content: ""; flex-grow: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); }
 
@@ -480,6 +573,7 @@
             .spotify-details { align-items: center; width: 100%; }
             .stats-grid, .links-grid { grid-template-columns: 1fr; }
             #view-counter { bottom: 1rem; left: 1rem; }
+            .discord-server-header { justify-content: center; text-align: center; }
         }
     </style>
 </head>
@@ -556,6 +650,25 @@
             <div class="card-corner card-corner-tr"></div>
             <div class="card-corner card-corner-bl"></div>
             <div class="card-corner card-corner-br"></div>
+            <h2>Discord Server</h2>
+            <div class="discord-server-header">
+                <div class="discord-server-name">
+                    <svg viewBox="0 0 127.14 96.36"><path fill="currentColor" d="M107.7 8.07A105.15 105.15 0 0 0 81.47 0a72.06 72.06 0 0 0-3.36 6.83A97.68 97.68 0 0 0 49 6.83 72.37 72.37 0 0 0 45.64 0a105.89 105.89 0 0 0-26.27 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0 0 32.17 16.15 77.7 77.7 0 0 0 6.89-11.31 68.42 68.42 0 0 1-10.85-5.18c.91-.66 1.8-1.34 2.66-2.06 20.87 9.54 43.46 9.54 64.08 0 .87.72 1.76 1.4 2.66 2.06a68.68 68.68 0 0 1-10.87 5.19 77 77 0 0 0 6.89 11.3A105.25 105.25 0 0 0 126.6 80.22c2.64-27.36-4.5-51.08-18.9-72.15ZM42.45 65.69c-6.27 0-11.4-5.73-11.4-12.8s5-12.8 11.4-12.8c6.46 0 11.51 5.78 11.4 12.8 0 7.07-5 12.8-11.4 12.8Zm42.24 0c-6.27 0-11.4-5.73-11.4-12.8s5-12.8 11.4-12.8c6.46 0 11.51 5.78 11.4 12.8 0 7.07-4.94 12.8-11.4 12.8Z"/></svg>
+                    <span id="discord-server-name">Loading...</span>
+                </div>
+                <div class="discord-online-badge">
+                    <span class="online-dot"></span>
+                    <span id="discord-online-count">...</span>
+                </div>
+            </div>
+            <div class="discord-members-grid" id="discord-members-grid"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-corner card-corner-tl"></div>
+            <div class="card-corner card-corner-tr"></div>
+            <div class="card-corner card-corner-bl"></div>
+            <div class="card-corner card-corner-br"></div>
             <h2>Skills & Expertise</h2>
             <div class="skills-container">
                 <div class="skill-tag">Graphic Design</div>
@@ -610,6 +723,10 @@
             <svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
             GitHub
         </a>
+        <a href="#" target="_blank" class="link-btn" id="discord-join-link" style="display:none;">
+            <svg viewBox="0 0 127.14 96.36"><path fill="currentColor" d="M107.7 8.07A105.15 105.15 0 0 0 81.47 0a72.06 72.06 0 0 0-3.36 6.83A97.68 97.68 0 0 0 49 6.83 72.37 72.37 0 0 0 45.64 0a105.89 105.89 0 0 0-26.27 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0 0 32.17 16.15 77.7 77.7 0 0 0 6.89-11.31 68.42 68.42 0 0 1-10.85-5.18c.91-.66 1.8-1.34 2.66-2.06 20.87 9.54 43.46 9.54 64.08 0 .87.72 1.76 1.4 2.66 2.06a68.68 68.68 0 0 1-10.87 5.19 77 77 0 0 0 6.89 11.3A105.25 105.25 0 0 0 126.6 80.22c2.64-27.36-4.5-51.08-18.9-72.15ZM42.45 65.69c-6.27 0-11.4-5.73-11.4-12.8s5-12.8 11.4-12.8c6.46 0 11.51 5.78 11.4 12.8 0 7.07-5 12.8-11.4 12.8Zm42.24 0c-6.27 0-11.4-5.73-11.4-12.8s5-12.8 11.4-12.8c6.46 0 11.51 5.78 11.4 12.8 0 7.07-4.94 12.8-11.4 12.8Z"/></svg>
+            Join Discord
+        </a>
     </div>
 
     <div id="view-counter">
@@ -620,6 +737,7 @@
     <script>
         const ghUsername = 'Metablist';
         const discordId = '1401860400957489232';
+        const discordGuildId = '1460419676675899548';
         const palette = ['#ffffff', '#cccccc', '#999999', '#666666', '#333333'];
 
         let spotifyData = null;
@@ -874,6 +992,70 @@
             } catch (e) {}
         }
 
+        // ── Discord Server widget ────────────────────────────────────────
+        async function fetchDiscordServerWidget() {
+            const nameEl = document.getElementById('discord-server-name');
+            const countEl = document.getElementById('discord-online-count');
+            const grid = document.getElementById('discord-members-grid');
+
+            try {
+                const res = await fetch(`https://discord.com/api/guilds/${discordGuildId}/widget.json`);
+                if (!res.ok) {
+                    nameEl.textContent = 'Widget disabled';
+                    countEl.textContent = '—';
+                    grid.innerHTML = '<span class="discord-server-empty">Enable the server widget in Discord settings to show this.</span>';
+                    return;
+                }
+                const data = await res.json();
+
+                nameEl.textContent = data.name ?? 'Discord Server';
+                const onlineCount = data.presence_count ?? (data.members ? data.members.length : 0);
+                countEl.textContent = `${onlineCount} online`;
+
+                const statusColors = { online: '#22c55e', idle: '#f59e0b', dnd: '#ef4444', offline: '#737373' };
+                grid.innerHTML = '';
+
+                const members = (data.members || []).slice(0, 24);
+                if (members.length === 0) {
+                    grid.innerHTML = '<span class="discord-server-empty">No one online right now</span>';
+                } else {
+                    members.forEach(m => {
+                        const el = document.createElement('div');
+                        el.className = 'discord-member';
+                        el.title = m.username;
+                        const dotColor = statusColors[m.status] || statusColors.offline;
+                        const img = document.createElement('img');
+                        img.src = m.avatar_url;
+                        img.alt = m.username;
+                        const dot = document.createElement('span');
+                        dot.className = 'member-status-dot';
+                        dot.style.backgroundColor = dotColor;
+                        el.appendChild(img);
+                        el.appendChild(dot);
+                        grid.appendChild(el);
+                    });
+
+                    const remaining = onlineCount - members.length;
+                    if (remaining > 0) {
+                        const overflow = document.createElement('div');
+                        overflow.className = 'discord-member-overflow';
+                        overflow.textContent = `+${remaining}`;
+                        overflow.title = `${remaining} more online`;
+                        grid.appendChild(overflow);
+                    }
+                }
+
+                const joinLink = document.getElementById('discord-join-link');
+                if (data.instant_invite) {
+                    joinLink.href = data.instant_invite;
+                    joinLink.style.display = 'inline-flex';
+                }
+            } catch (e) {
+                nameEl.textContent = 'Unavailable';
+                countEl.textContent = '—';
+            }
+        }
+
         // ── View counter ──────────────────────────────────────────────────
         async function fetchViewCount() {
             try {
@@ -892,6 +1074,8 @@
             fetchGitHubData();
             updateLanyard();
             setInterval(updateLanyard, 3000);
+            fetchDiscordServerWidget();
+            setInterval(fetchDiscordServerWidget, 60000);
             fetchViewCount();
         });
     </script>
